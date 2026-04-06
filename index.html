@@ -39,16 +39,29 @@
             min-height: 100vh;
         }
         
-        /* Header */
         .header { 
-            padding: 30px 15px 20px; 
-            text-align: center; 
+            padding: 25px 15px 15px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
             position: sticky; 
             top: 0; 
             background: rgba(15, 23, 42, 0.8);
             backdrop-filter: blur(10px);
             z-index: 10; 
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .title-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
         .title { 
             background: linear-gradient(to right, var(--primary), var(--primary-light));
@@ -60,7 +73,6 @@
             letter-spacing: -0.5px;
         }
 
-        /* Options Bar */
         .options-bar {
             width: 85%;
             max-width: 500px;
@@ -78,9 +90,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        .help-btn:active { transform: scale(0.95); background: rgba(0, 173, 181, 0.2); }
 
-        /* Channel List */
         .list { 
             padding: 10px 0 30px; 
             width: 85%;
@@ -127,7 +137,6 @@
             font-weight: 800; 
         }
 
-        /* Disclaimer Section */
         .footer-disclaimer {
             width: 80%;
             max-width: 500px;
@@ -142,7 +151,6 @@
             line-height: 1.8;
         }
 
-        /* Player Layout */
         #player-container { 
             display: none; position: fixed; top: 0; left: 0; 
             width: 100%; height: 100%; background: black; z-index: 100; 
@@ -179,7 +187,12 @@
 <body>
 
     <div id="main-ui">
-        <div class="header"><h1 class="title">JAPAN LIVE TV</h1></div>
+        <header class="header">
+            <div class="header-content">
+                <img src="icon.png" alt="Icon" class="title-icon">
+                <h1 class="title">JAPAN LIVE TV</h1>
+            </div>
+        </header>
         
         <div class="options-bar">
             <button class="help-btn" onclick="showHelp()">💡 Not working?</button>
@@ -213,7 +226,6 @@
                     channels.forEach((ch, index) => {
                         const div = document.createElement('div');
                         div.className = 'card';
-                        // 등장 애니메이션 지연 효과
                         div.style.animation = `cardAppear 0.5s ease forwards ${index * 0.1}s`;
                         div.innerHTML = `<span class="channel-name">${ch.name}</span><span class="live-badge">LIVE</span>`;
                         div.onclick = () => openPlayer(ch.url, ch.name);
@@ -260,7 +272,8 @@
         }
 
         function showHelp() {
-            alert("📺 Seeing a blank white screen?\n\nPlease try 'Desktop Mode' in each channel's player.");
+            // 요청하신 대로 메시지를 심플하게 수정했습니다.
+            alert("Please try 'Desktop Mode' in each channel's player");
         }
 
         if ('serviceWorker' in navigator) {
