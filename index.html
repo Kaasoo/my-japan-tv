@@ -8,7 +8,11 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#121212">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <link rel="apple-touch-icon" href="icon.png.png">
+    <link rel="apple-touch-icon" href="icon.png">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon" href="icon.png">
     
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 
@@ -196,6 +200,13 @@
                 "이 설정을 켜면 차단된 영상이 정상적으로 재생됩니다!"
             );
         }
+    </script>
+    <script>
+    if ('serviceWorker' in navigator) {
+        // GitHub Pages 경로를 고려하여 등록
+        navigator.serviceWorker.register('/my-japan-tv/sw.js')
+        .then(() => console.log("Service Worker Registered"));
+    }
     </script>
 </body>
 </html>
