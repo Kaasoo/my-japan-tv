@@ -1,9 +1,30 @@
 [
-  { "name": "NHK G", "url": "https://mov3.co/embednhk.html" },
-  { "name": "TV ASAHI", "url": "https://ok.ru/videoembed/13247649750662" },
-  { "name": "TV TOKYO", "url": "https://ok.ru/videoembed/13247594109574" },
-  { "name": "NTV", "url": "https://mov3.co/embedntv.html" },
-  { "name": "FUJI TV", "url": "https://mov3.co/embedfujitv.html" },
-  { "name": "TBS", "url": "https://mov3.co/embedtbs.html" },
-  { "name": "Tokyo MX", "url": "https://ok.ru/videoembed/13247571892358" }
+  {
+    "name": "NHK G",
+    "url": "https://mov3.co/embednhk.html"
+  },
+  {
+    "name": "TV ASAHI",
+    "url": "https://ok.ru/videoembed/13247649750662"
+  },
+  {
+    "name": "TV TOKYO",
+    "url": "https://ok.ru/videoembed/13125706391159"
+  },
+  {
+    "name": "NTV",
+    "url": "https://mov3.co/embedntv.html"
+  },
+  {
+    "name": "FUJI TV",
+    "url": "https://mov3.co/embedfujitv.html"
+  },
+  {
+    "name": "TBS",
+    "url": "https://mov3.co/embedtbs.html"
+  },
+  {
+    "name": "Tokyo MX",
+    "url": "https://ok.ru/videoembed/13202753134285"
+  }
 ]
