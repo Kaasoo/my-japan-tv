@@ -1,4 +1,4 @@
-name: Daily Channel Update
+name: Hourly Channel Update
 
 on:
   schedule:
