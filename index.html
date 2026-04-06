@@ -1,7 +1,6 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y2GJB27CH2"></script>
     <script>
     window.dataLayer = window.dataLayer || [];
@@ -33,7 +32,7 @@
             -webkit-tap-highlight-color: transparent;
         }
         
-        /* 상단 헤더 */
+        /* Header */
         .header { 
             padding: 15px; 
             text-align: center; 
@@ -45,9 +44,9 @@
         }
         .title { color: #00adb5; margin: 0; font-size: 20px; font-weight: bold; }
 
-        /* 옵션 바 (도움말 버튼) */
+        /* Options Bar */
         .options-bar {
-            width: 70%;       /* 리스트 폭에 맞춰 조절 */
+            width: 70%;
             max-width: 500px;
             margin: 15px auto 5px;
             padding: 0;
@@ -64,12 +63,12 @@
             cursor: pointer;
         }
 
-        /* 채널 리스트: 폭을 70%로 설정 및 중앙 정렬 */
+        /* Channel List (70% width) */
         .list { 
             padding: 10px 0 40px; 
-            width: 70%;        /* 핵심 변경: 화면의 70%만 차지 */
-            max-width: 500px;   /* 큰 화면에서 너무 퍼지지 않게 제한 */
-            margin: 0 auto;     /* 중앙 정렬 */
+            width: 70%;
+            max-width: 500px;
+            margin: 0 auto;
         }
         
         .card { 
@@ -83,7 +82,7 @@
             cursor: pointer; 
             border-left: 5px solid #00adb5;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            width: 100%;        /* 부모인 .list 너비에 맞춤 */
+            width: 100%;
             box-sizing: border-box;
         }
         .card:active { background: #2a2a2a; transform: scale(0.98); }
@@ -98,7 +97,7 @@
             font-weight: bold; 
         }
 
-        /* 플레이어 레이아웃 */
+        /* Player Layout */
         #player-container { 
             display: none; position: fixed; top: 0; left: 0; 
             width: 100%; height: 100%; background: black; z-index: 100; 
@@ -120,7 +119,7 @@
             border: none;
             padding: 8px 14px;
             border-radius: 6px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
         }
 
@@ -133,7 +132,7 @@
         <div class="header"><h1 class="title">MY JAPAN LIVE TV 📺</h1></div>
         
         <div class="options-bar">
-            <button class="help-btn" onclick="showHelp()">💡 안 나오나요?</button>
+            <button class="help-btn" onclick="showHelp()">💡 Not working?</button>
         </div>
 
         <div class="list" id="channel-list">
@@ -142,8 +141,8 @@
 
     <div id="player-container">
         <div class="player-controls">
-            <div class="back-btn" onclick="closePlayer()">← 목록으로</div>
-            <button id="open-external" class="external-btn">PC모드 열기</button>
+            <div class="back-btn" onclick="closePlayer()">← Back to List</div>
+            <button id="open-external" class="external-btn">Open in Desktop Mode</button>
         </div>
         <iframe 
             id="video-frame" 
@@ -157,7 +156,7 @@
     <script>
         let currentChannelUrl = "";
 
-        // 1. JSON 데이터 로드 및 리스트 생성
+        // 1. Load Channel Data & Render List
         document.addEventListener('DOMContentLoaded', () => {
             const listEl = document.getElementById('channel-list');
 
@@ -168,22 +167,30 @@
                         const div = document.createElement('div');
                         div.className = 'card';
                         div.innerHTML = `<span class="channel-name">${ch.name}</span><span class="live-badge">LIVE</span>`;
-                        div.onclick = () => openPlayer(ch.url);
+                        div.onclick = () => openPlayer(ch.url, ch.name); // Pass channel name for tracking
                         listEl.appendChild(div);
                     });
                 })
                 .catch(err => {
-                    listEl.innerHTML = `<p style="text-align:center; color:#888; margin-top:50px;">데이터 로딩 실패</p>`;
+                    listEl.innerHTML = `<p style="text-align:center; color:#888; margin-top:50px;">Failed to load data.</p>`;
                 });
         });
 
-        // 2. 플레이어 열기 함수
-        function openPlayer(url) {
+        // 2. Open Player Logic with Tracking
+        function openPlayer(url, channelName) {
             const frame = document.getElementById('video-frame');
             const container = document.getElementById('player-container');
             const externalBtn = document.getElementById('open-external');
             
             currentChannelUrl = url;
+
+            // Tracking Click Event in Google Analytics
+            if (typeof gtag === 'function') {
+                gtag('event', 'select_content', {
+                    content_type: 'channel',
+                    content_id: channelName
+                });
+            }
             
             if (frame && container) {
                 const videoUrl = url.includes('?') ? `${url}&autoplay=1` : `${url}?autoplay=1`;
@@ -192,14 +199,14 @@
                 document.body.style.overflow = 'hidden';
 
                 externalBtn.onclick = () => {
-                    if(confirm("영상이 안 나올 경우 새 창으로 여세요.\n(데스크탑 모드를 추천합니다.)")) {
+                    if(confirm("If the video doesn't load, open in a new tab.\n(Desktop mode recommended.)")) {
                         window.open(url, '_blank');
                     }
                 };
             }
         }
 
-        // 3. 플레이어 닫기 함수
+        // 3. Close Player Logic
         function closePlayer() {
             const frame = document.getElementById('video-frame');
             const container = document.getElementById('player-container');
@@ -210,17 +217,17 @@
             }
         }
 
-        // 4. 도움말 팝업
+        // 4. Help Alert
         function showHelp() {
             alert(
-                "📺 영상이 하얀 화면으로 나오나요?\n\n" +
-                "1. 아이폰: [가A] -> [데스크탑 웹사이트 요청]\n" +
-                "2. 안드로이드: [점3개] -> [데스크탑 사이트] 체크\n\n" +
-                "이 설정을 켜면 영상이 정상 재생됩니다!"
+                "📺 Blank screen?\n\n" +
+                "1. iPhone: Tap [aA] -> [Request Desktop Website]\n" +
+                "2. Android: Tap [3 dots] -> Check [Desktop site]\n\n" +
+                "Enabling this will fix the playback issue!"
             );
         }
 
-        // 5. 서비스 워커 등록 (PWA용)
+        // 5. Register Service Worker (PWA)
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/my-japan-tv/sw.js')
             .then(() => console.log("Service Worker Registered"));
