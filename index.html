@@ -7,9 +7,7 @@
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#121212">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <link rel="apple-touch-icon" href="icon.png">
-
+    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <link rel="apple-touch-icon" href="icon.png">
@@ -40,9 +38,10 @@
 
         /* 옵션 바 (도움말 버튼) */
         .options-bar {
-            max-width: 600px;
-            margin: 10px auto 0;
-            padding: 0 15px;
+            width: 70%;       /* 리스트 폭에 맞춰 조절 */
+            max-width: 500px;
+            margin: 15px auto 5px;
+            padding: 0;
             text-align: right;
         }
         .help-btn {
@@ -51,30 +50,43 @@
             color: #00adb5;
             padding: 6px 12px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             cursor: pointer;
         }
 
-        /* 채널 리스트 */
-        .list { padding: 10px 15px 30px; max-width: 600px; margin: 0 auto; }
+        /* 채널 리스트: 폭을 70%로 설정 및 중앙 정렬 */
+        .list { 
+            padding: 10px 0 40px; 
+            width: 70%;        /* 핵심 변경: 화면의 70%만 차지 */
+            max-width: 500px;   /* 큰 화면에서 너무 퍼지지 않게 제한 */
+            margin: 0 auto;     /* 중앙 정렬 */
+        }
+        
         .card { 
             background: #1e1e1e; 
-            padding: 22px; 
+            padding: 18px 20px; 
             border-radius: 12px; 
-            margin-bottom: 15px; 
+            margin-bottom: 12px; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
             cursor: pointer; 
             border-left: 5px solid #00adb5;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            width: 100%;        /* 부모인 .list 너비에 맞춤 */
+            box-sizing: border-box;
         }
         .card:active { background: #2a2a2a; transform: scale(0.98); }
-        .channel-name { font-size: 18px; font-weight: bold; }
+        
+        .channel-name { font-size: 16px; font-weight: bold; }
         .live-badge { 
-            color: #ff4b5c; border: 1px solid #ff4b5c; padding: 2px 8px; 
-            border-radius: 4px; font-size: 11px; font-weight: bold; 
+            color: #ff4b5c; 
+            border: 1px solid #ff4b5c; 
+            padding: 2px 8px; 
+            border-radius: 4px; 
+            font-size: 10px; 
+            font-weight: bold; 
         }
 
         /* 플레이어 레이아웃 */
@@ -83,7 +95,6 @@
             width: 100%; height: 100%; background: black; z-index: 100; 
         }
         
-        /* 플레이어 상단 컨트롤 바 */
         .player-controls {
             display: flex;
             justify-content: space-between;
@@ -113,7 +124,7 @@
         <div class="header"><h1 class="title">MY JAPAN LIVE TV 📺</h1></div>
         
         <div class="options-bar">
-            <button class="help-btn" onclick="showHelp()">💡 영상이 안 나오나요?</button>
+            <button class="help-btn" onclick="showHelp()">💡 안 나오나요?</button>
         </div>
 
         <div class="list" id="channel-list">
@@ -123,7 +134,7 @@
     <div id="player-container">
         <div class="player-controls">
             <div class="back-btn" onclick="closePlayer()">← 목록으로</div>
-            <button id="open-external" class="external-btn">새 창(PC모드) 열기</button>
+            <button id="open-external" class="external-btn">PC모드 열기</button>
         </div>
         <iframe 
             id="video-frame" 
@@ -137,7 +148,7 @@
     <script>
         let currentChannelUrl = "";
 
-        // 1. JSON 데이터 로드
+        // 1. JSON 데이터 로드 및 리스트 생성
         document.addEventListener('DOMContentLoaded', () => {
             const listEl = document.getElementById('channel-list');
 
@@ -157,7 +168,7 @@
                 });
         });
 
-        // 2. 플레이어 열기
+        // 2. 플레이어 열기 함수
         function openPlayer(url) {
             const frame = document.getElementById('video-frame');
             const container = document.getElementById('player-container');
@@ -171,16 +182,15 @@
                 container.style.display = 'block';
                 document.body.style.overflow = 'hidden';
 
-                // 새 창 열기 버튼 이벤트
                 externalBtn.onclick = () => {
-                    if(confirm("영상이 안 나올 경우 확인을 눌러 새 창으로 여세요.\n(브라우저 설정에서 '데스크탑 모드'를 켜면 더 확실합니다.)")) {
+                    if(confirm("영상이 안 나올 경우 새 창으로 여세요.\n(데스크탑 모드를 추천합니다.)")) {
                         window.open(url, '_blank');
                     }
                 };
             }
         }
 
-        // 3. 플레이어 닫기
+        // 3. 플레이어 닫기 함수
         function closePlayer() {
             const frame = document.getElementById('video-frame');
             const container = document.getElementById('player-container');
@@ -195,18 +205,17 @@
         function showHelp() {
             alert(
                 "📺 영상이 하얀 화면으로 나오나요?\n\n" +
-                "1. 아이폰: 주소창 왼쪽 [가A] -> [데스크탑 웹사이트 요청]\n" +
-                "2. 안드로이드: 우측 상단 [점3개] -> [데스크탑 사이트] 체크\n\n" +
-                "이 설정을 켜면 차단된 영상이 정상적으로 재생됩니다!"
+                "1. 아이폰: [가A] -> [데스크탑 웹사이트 요청]\n" +
+                "2. 안드로이드: [점3개] -> [데스크탑 사이트] 체크\n\n" +
+                "이 설정을 켜면 영상이 정상 재생됩니다!"
             );
         }
-    </script>
-    <script>
-    if ('serviceWorker' in navigator) {
-        // GitHub Pages 경로를 고려하여 등록
-        navigator.serviceWorker.register('/my-japan-tv/sw.js')
-        .then(() => console.log("Service Worker Registered"));
-    }
+
+        // 5. 서비스 워커 등록 (PWA용)
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/my-japan-tv/sw.js')
+            .then(() => console.log("Service Worker Registered"));
+        }
     </script>
 </body>
 </html>
