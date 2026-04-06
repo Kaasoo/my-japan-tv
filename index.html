@@ -13,100 +13,136 @@
     <title>MY JAPAN LIVE TV</title>
     
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#121212">
+    <meta name="theme-color" content="#0f172a">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="icon.png">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 
     <style>
+        :root {
+            --primary: #00adb5;
+            --primary-light: #00f2fe;
+            --bg-dark: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-dim: #64748b;
+        }
+
         body { 
             margin: 0; 
-            background: #121212; 
-            color: white; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%);
+            color: var(--text-main); 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
             overflow-x: hidden; 
             -webkit-tap-highlight-color: transparent;
+            min-height: 100vh;
         }
         
+        /* Header */
         .header { 
-            padding: 15px; 
+            padding: 30px 15px 20px; 
             text-align: center; 
-            border-bottom: 1px solid #333; 
             position: sticky; 
             top: 0; 
-            background: #121212; 
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
             z-index: 10; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
-        .title { color: #00adb5; margin: 0; font-size: 20px; font-weight: bold; }
+        .title { 
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0; 
+            font-size: 24px; 
+            font-weight: 800; 
+            letter-spacing: -0.5px;
+        }
 
+        /* Options Bar */
         .options-bar {
-            width: 70%;
+            width: 85%;
             max-width: 500px;
-            margin: 15px auto 5px;
-            padding: 0;
+            margin: 20px auto 10px;
             text-align: right;
         }
         .help-btn {
             background: rgba(0, 173, 181, 0.1);
-            border: 1px solid #00adb5;
-            color: #00adb5;
-            padding: 6px 12px;
-            border-radius: 20px;
+            border: 1px solid rgba(0, 173, 181, 0.3);
+            color: var(--primary);
+            padding: 8px 16px;
+            border-radius: 50px;
             font-size: 11px;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
+        .help-btn:active { transform: scale(0.95); background: rgba(0, 173, 181, 0.2); }
 
+        /* Channel List */
         .list { 
-            padding: 10px 0 20px; 
-            width: 70%;
+            padding: 10px 0 30px; 
+            width: 85%;
             max-width: 500px;
             margin: 0 auto;
         }
         
         .card { 
-            background: #1e1e1e; 
-            padding: 18px 20px; 
-            border-radius: 12px; 
-            margin-bottom: 12px; 
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            padding: 22px 24px; 
+            border-radius: 20px; 
+            margin-bottom: 16px; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
             cursor: pointer; 
-            border-left: 5px solid #00adb5;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            width: 100%;
-            box-sizing: border-box;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
         }
-        .card:active { background: #2a2a2a; transform: scale(0.98); }
         
-        .channel-name { font-size: 16px; font-weight: bold; }
+        .card::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; height: 100%; width: 5px;
+            background: var(--primary);
+        }
+
+        .card:active { transform: scale(0.96); background: rgba(51, 65, 85, 0.9); }
+        
+        .channel-name { font-size: 17px; font-weight: 700; letter-spacing: -0.2px; }
         .live-badge { 
+            background: rgba(255, 75, 92, 0.1);
             color: #ff4b5c; 
-            border: 1px solid #ff4b5c; 
-            padding: 2px 8px; 
-            border-radius: 4px; 
+            border: 1px solid rgba(255, 75, 92, 0.3);
+            padding: 3px 10px; 
+            border-radius: 8px; 
             font-size: 10px; 
-            font-weight: bold; 
+            font-weight: 800; 
         }
 
         /* Disclaimer Section */
         .footer-disclaimer {
-            width: 70%;
+            width: 80%;
             max-width: 500px;
-            margin: 20px auto 40px;
-            padding: 15px;
-            border-top: 1px solid #333;
+            margin: 20px auto 60px;
+            padding: 20px;
             text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
         .disclaimer-text {
-            font-size: 11px;
-            color: #666;
-            line-height: 1.6;
-            word-break: keep-all;
+            font-size: 12px;
+            color: var(--text-dim);
+            line-height: 1.8;
         }
 
+        /* Player Layout */
         #player-container { 
             display: none; position: fixed; top: 0; left: 0; 
             width: 100%; height: 100%; background: black; z-index: 100; 
@@ -116,29 +152,34 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #111;
-            height: 55px;
-            padding: 0 15px;
-            border-bottom: 1px solid #222;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(15px);
+            height: 65px;
+            padding: 0 20px;
         }
-        .back-btn { color: #00adb5; font-weight: bold; font-size: 16px; cursor: pointer; }
+        .back-btn { color: var(--primary); font-weight: 700; font-size: 15px; cursor: pointer; }
         .external-btn {
-            background: #00adb5;
-            color: white;
+            background: var(--primary);
+            color: #0f172a;
             border: none;
-            padding: 8px 14px;
-            border-radius: 6px;
+            padding: 10px 18px;
+            border-radius: 12px;
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 800;
+            box-shadow: 0 4px 15px rgba(0, 173, 181, 0.3);
         }
 
-        iframe { width: 100%; height: calc(100% - 55px); border: none; background: #000; }
+        iframe { width: 100%; height: calc(100% - 65px); border: none; background: #000; }
+
+        @keyframes cardAppear {
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
 
     <div id="main-ui">
-        <div class="header"><h1 class="title">MY JAPAN LIVE TV 📺</h1></div>
+        <div class="header"><h1 class="title">JAPAN LIVE TV</h1></div>
         
         <div class="options-bar">
             <button class="help-btn" onclick="showHelp()">💡 Not working?</button>
@@ -155,8 +196,8 @@
 
     <div id="player-container">
         <div class="player-controls">
-            <div class="back-btn" onclick="closePlayer()">← Back to List</div>
-            <button id="open-external" class="external-btn">Open in Desktop Mode</button>
+            <div class="back-btn" onclick="closePlayer()">✕ Back to List</div>
+            <button id="open-external" class="external-btn">Desktop Mode</button>
         </div>
         <iframe id="video-frame" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="no-referrer-when-downgrade" src=""></iframe>
     </div>
@@ -169,9 +210,11 @@
             fetch('channels.json')
                 .then(response => response.json())
                 .then(channels => {
-                    channels.forEach(ch => {
+                    channels.forEach((ch, index) => {
                         const div = document.createElement('div');
                         div.className = 'card';
+                        // 등장 애니메이션 지연 효과
+                        div.style.animation = `cardAppear 0.5s ease forwards ${index * 0.1}s`;
                         div.innerHTML = `<span class="channel-name">${ch.name}</span><span class="live-badge">LIVE</span>`;
                         div.onclick = () => openPlayer(ch.url, ch.name);
                         listEl.appendChild(div);
