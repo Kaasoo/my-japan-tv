@@ -34,7 +34,14 @@
 
     <div id="player-container">
         <div class="back-bar" onclick="closePlayer()">← 목록으로 돌아가기</div>
-        <iframe id="video-frame" allowfullscreen src=""></iframe>
+        <iframe 
+            id="video-frame" 
+            allowfullscreen 
+            allow="autoplay; encrypted-media" 
+            referrerpolicy="no-referrer"
+            sandbox="allow-forms allow-scripts allow-same-origin allow-presentation"
+            src="">
+        </iframe>
     </div>
 
     <script>
