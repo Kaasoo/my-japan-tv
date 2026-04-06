@@ -6,39 +6,35 @@ from playwright.async_api import async_playwright
 async def get_video_src(page, channel_name, url):
     try:
         print(f"[{channel_name}] 소스 추출 시도 중...")
-        # 페이지 로딩 타임아웃 40초, DOM 구조 로드 시 바로 진행
+        # 타임아웃 40초, DOM 구조 로딩 시 바로 진행하여 속도 향상
         await page.goto(url, wait_until="domcontentloaded", timeout=40000)
         
         # 자바스크립트가 iframe을 생성할 시간을 충분히 줌 (5초)
         await asyncio.sleep(5)
         
-        # 영상이 담긴 iframe(id='su-ivp') 찾기
+        # 영상 플레이어가 담긴 iframe(id='su-ivp') 찾기
         iframe = await page.query_selector("#su-ivp")
         
         if iframe:
             src = await iframe.get_attribute("src")
             if not src: return None
 
-            # --- [주소 정규화 로직 시작] ---
+            # --- [주소 정규화 로직] ---
             
-            # 1. //ok.ru... 처럼 프로토콜만 없는 경우
+            # 1. //ok.ru... 처럼 프로토콜만 없는 경우 보정
             if src.startswith('//'):
                 src = "https:" + src
             
-            # 2. embedfujitv.html 처럼 상대 경로인 경우
+            # 2. embedfujitv.html 처럼 도메인이 없는 상대 경로인 경우 보정
             elif not src.startswith('http'):
-                # 슬래시 유무에 따라 도메인 결합
                 if src.startswith('/'):
                     src = "https://mov3.co" + src
                 else:
                     src = "https://mov3.co/" + src
             
-            # 3. 중복된 슬래시나 도메인 꼬임 방지 (mov3.co//ok.ru 방지)
+            # 3. 중복 도메인 방지 (mov3.co//ok.ru 같은 케이스 처리)
             if "mov3.co" in src and "ok.ru" in src:
-                # ok.ru는 독립 도메인이므로 mov3 부분을 제거
                 src = "https://ok.ru" + src.split("ok.ru")[1]
-            
-            # --- [주소 정규화 로직 끝] ---
             
             print(f"✅ {channel_name} 추출 성공: {src}")
             return src
@@ -51,7 +47,8 @@ async def get_video_src(page, channel_name, url):
         return None
 
 async def main():
-    # 현재 파이썬 파일이 있는 폴더 경로를 찾아서 저장 위치로 지정
+    # [중요] GitHub Actions 환경에서도 파일 위치를 정확히 잡기 위한 경로 설정
+    # 이 코드가 있는 폴더의 절대 경로를 가져와서 그 옆에 channels.json을 만듭니다.
     current_dir = os.path.dirname(os.path.abspath(__file__))
     json_path = os.path.join(current_dir, 'channels.json')
 
@@ -68,11 +65,11 @@ async def main():
     results = []
     
     async with async_playwright() as p:
-        # 브라우저 실행 (실제 창을 보고 싶으면 headless=False로 변경하세요)
+        # headless=True: 창을 띄우지 않고 백그라운드에서 실행 (GitHub Actions용)
         browser = await p.chromium.launch(headless=True)
         page = await browser.new_page()
         
-        # 차단 방지를 위한 User-Agent 설정
+        # 일반 브라우저처럼 보이게 하기 위한 헤더 설정
         await page.set_extra_http_headers({
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         })
@@ -82,15 +79,17 @@ async def main():
             if src:
                 results.append({ "name": ch['name'], "url": src })
             else:
-                print(f"⏩ {ch['name']}는 건너뜁니다.")
+                print(f"⏩ {ch['name']} 추출 실패로 목록에서 제외")
         
         await browser.close()
 
-    # 추출된 데이터를 JSON 파일로 저장 (파이썬 파일과 동일 위치)
-    with open(json_path, 'w', encoding='utf-8') as f:
-        json.dump(results, f, ensure_ascii=False, indent=2)
-    
-    print(f"\n✨ 작업 완료! 저장 위치: {json_path}")
+    # 결과가 있을 때만 파일 저장
+    if results:
+        with open(json_path, 'w', encoding='utf-8') as f:
+            json.dump(results, f, ensure_ascii=False, indent=2)
+        print(f"\n✨ 업데이트 완료! 저장 위치: {json_path}")
+    else:
+        print("\n⚠️ 추출된 데이터가 없어 파일을 업데이트하지 않았습니다.")
 
 if __name__ == "__main__":
     asyncio.run(main())

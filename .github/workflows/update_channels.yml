@@ -2,34 +2,49 @@ name: Daily Channel Update
 
 on:
   schedule:
-    # UTC 기준 03:00은 한국 시간(KST)으로 낮 12시입니다.
+    # 한국 시간(KST) 기준 낮 12시는 UTC 기준 03:00입니다.
     - cron: '0 3 * * *'
-  workflow_dispatch: # 수동 실행 버튼
+  workflow_dispatch: # GitHub Actions 탭에서 수동으로 실행할 수 있는 버튼을 만듭니다.
+
+# GitHub Actions가 레포지토리에 파일을 쓸 수 있도록 권한을 설정합니다.
+permissions:
+  contents: write
 
 jobs:
   update:
     runs-on: ubuntu-latest
     steps:
+      # 1. 레포지토리의 코드를 가져옵니다.
       - name: Checkout code
-        uses: actions/checkout@v4  # v3에서 v4로 업데이트
+        uses: actions/checkout@v4
 
+      # 2. 파이썬 환경을 설정합니다.
       - name: Set up Python
-        uses: actions/setup-python@v5  # v4에서 v5로 업데이트
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
+      # 3. 필요한 라이브러리와 브라우저 엔진(Playwright)을 설치합니다.
       - name: Install dependencies
         run: |
           pip install playwright
           python -m playwright install chromium
 
+      # 4. 주소 추출 파이썬 스크립트를 실행합니다.
       - name: Run Scraper
         run: python fetch_source_url.py
 
+      # 5. 변경된 channels.json 파일을 GitHub에 다시 올립니다.
       - name: Commit and Push
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # channels.json 파일의 변경사항을 스테이징합니다.
           git add channels.json
-          git commit -m "Auto-update channels.json [skip ci]" || exit 0
-          git push
+          
+          # 변경사항이 있을 때만 커밋을 진행합니다. (없으면 에러 없이 종료)
+          git commit -m "Auto-update channels.json [skip ci]" || echo "No changes to commit"
+          
+          # 현재 브랜치(main)로 푸시합니다.
+          git push origin main
