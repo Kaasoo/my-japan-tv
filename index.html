@@ -6,7 +6,6 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-Y2GJB27CH2');
     </script>    
     <meta charset="UTF-8">
@@ -15,11 +14,9 @@
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#121212">
-    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <link rel="apple-touch-icon" href="icon.png">
-    
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 
     <style>
@@ -32,7 +29,6 @@
             -webkit-tap-highlight-color: transparent;
         }
         
-        /* Header */
         .header { 
             padding: 15px; 
             text-align: center; 
@@ -44,7 +40,6 @@
         }
         .title { color: #00adb5; margin: 0; font-size: 20px; font-weight: bold; }
 
-        /* Options Bar */
         .options-bar {
             width: 70%;
             max-width: 500px;
@@ -63,9 +58,8 @@
             cursor: pointer;
         }
 
-        /* Channel List (70% width) */
         .list { 
-            padding: 10px 0 40px; 
+            padding: 10px 0 20px; 
             width: 70%;
             max-width: 500px;
             margin: 0 auto;
@@ -97,7 +91,22 @@
             font-weight: bold; 
         }
 
-        /* Player Layout */
+        /* Disclaimer Section */
+        .footer-disclaimer {
+            width: 70%;
+            max-width: 500px;
+            margin: 20px auto 40px;
+            padding: 15px;
+            border-top: 1px solid #333;
+            text-align: center;
+        }
+        .disclaimer-text {
+            font-size: 11px;
+            color: #666;
+            line-height: 1.6;
+            word-break: keep-all;
+        }
+
         #player-container { 
             display: none; position: fixed; top: 0; left: 0; 
             width: 100%; height: 100%; background: black; z-index: 100; 
@@ -135,8 +144,14 @@
             <button class="help-btn" onclick="showHelp()">💡 Not working?</button>
         </div>
 
-        <div class="list" id="channel-list">
-            </div>
+        <div class="list" id="channel-list"></div>
+
+        <div class="footer-disclaimer">
+            <p class="disclaimer-text">
+                This is a personal, non-commercial project created solely for <strong>Japanese language learning</strong> and educational purposes.<br>
+                All content is linked from external sources. We do not host any video files.
+            </p>
+        </div>
     </div>
 
     <div id="player-container">
@@ -144,22 +159,14 @@
             <div class="back-btn" onclick="closePlayer()">← Back to List</div>
             <button id="open-external" class="external-btn">Open in Desktop Mode</button>
         </div>
-        <iframe 
-            id="video-frame" 
-            allow="autoplay; fullscreen; encrypted-media; picture-in-picture" 
-            allowfullscreen 
-            referrerpolicy="no-referrer-when-downgrade"
-            src="">
-        </iframe>
+        <iframe id="video-frame" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="no-referrer-when-downgrade" src=""></iframe>
     </div>
 
     <script>
         let currentChannelUrl = "";
 
-        // 1. Load Channel Data & Render List
         document.addEventListener('DOMContentLoaded', () => {
             const listEl = document.getElementById('channel-list');
-
             fetch('channels.json')
                 .then(response => response.json())
                 .then(channels => {
@@ -167,7 +174,7 @@
                         const div = document.createElement('div');
                         div.className = 'card';
                         div.innerHTML = `<span class="channel-name">${ch.name}</span><span class="live-badge">LIVE</span>`;
-                        div.onclick = () => openPlayer(ch.url, ch.name); // Pass channel name for tracking
+                        div.onclick = () => openPlayer(ch.url, ch.name);
                         listEl.appendChild(div);
                     });
                 })
@@ -176,20 +183,14 @@
                 });
         });
 
-        // 2. Open Player Logic with Tracking
         function openPlayer(url, channelName) {
             const frame = document.getElementById('video-frame');
             const container = document.getElementById('player-container');
             const externalBtn = document.getElementById('open-external');
-            
             currentChannelUrl = url;
 
-            // Tracking Click Event in Google Analytics
             if (typeof gtag === 'function') {
-                gtag('event', 'select_content', {
-                    content_type: 'channel',
-                    content_id: channelName
-                });
+                gtag('event', 'select_content', { content_type: 'channel', content_id: channelName });
             }
             
             if (frame && container) {
@@ -206,7 +207,6 @@
             }
         }
 
-        // 3. Close Player Logic
         function closePlayer() {
             const frame = document.getElementById('video-frame');
             const container = document.getElementById('player-container');
@@ -217,17 +217,10 @@
             }
         }
 
-        // 4. Help Alert
         function showHelp() {
-            alert(
-                "📺 Blank screen?\n\n" +
-                "1. iPhone: Tap [aA] -> [Request Desktop Website]\n" +
-                "2. Android: Tap [3 dots] -> Check [Desktop site]\n\n" +
-                "Enabling this will fix the playback issue!"
-            );
+            alert("📺 Blank screen?\n\n1. iPhone: Tap [aA] -> [Request Desktop Website]\n2. Android: Tap [3 dots] -> Check [Desktop site]\n\nEnabling this will fix the playback issue!");
         }
 
-        // 5. Register Service Worker (PWA)
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/my-japan-tv/sw.js')
             .then(() => console.log("Service Worker Registered"));
