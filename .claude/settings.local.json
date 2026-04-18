@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:mov3.co)",
+      "WebFetch(domain:yakuzalink.com)",
+      "WebFetch(domain:aqstream.com)",
+      "WebFetch(domain:tvjapanlive.com)",
+      "WebFetch(domain:www.globalfreetv.com)",
+      "WebFetch(domain:iptv-search.com)",
+      "WebFetch(domain:www.squidtv.net)",
+      "WebFetch(domain:web.utako.moe)",
+      "WebFetch(domain:www.kds.tw)",
+      "WebFetch(domain:www.kaeritv.com)",
+      "WebFetch(domain:streema.com)",
+      "WebFetch(domain:www3.nhk.or.jp)",
+      "WebFetch(domain:tvchannels.live)",
+      "WebFetch(domain:www.olweb.tv)",
+      "WebFetch(domain:gitflic.ru)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "mcp__Claude_Preview__preview_start",
+      "WebFetch(domain:nl.utako.moe)",
+      "WebFetch(domain:github.com)"
+    ]
+  }
+}

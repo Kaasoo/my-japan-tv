@@ -1,0 +1,16 @@
+window.CHANNELS = [
+  {"name": "NHK G",      "url": "https://nl.utako.moe/NHK_G/index.m3u8"},
+  {"name": "NHK E テレ", "url": "https://nl.utako.moe/NHK_E/index.m3u8"},
+  {"name": "NTV",        "url": "https://nl.utako.moe/Nippon_TV/index.m3u8"},
+  {"name": "TV ASAHI",   "url": "https://nl.utako.moe/TV_Asahi/index.m3u8"},
+  {"name": "TBS",        "url": "https://nl.utako.moe/TBS/index.m3u8"},
+  {"name": "TV TOKYO",   "url": "https://nl.utako.moe/TV_Tokyo/index.m3u8"},
+  {"name": "FUJI TV",    "url": "https://nl.utako.moe/Fuji_TV/index.m3u8"},
+  {"name": "Tokyo MX",   "url": "https://nl.utako.moe/Tokyo_MX1/index.m3u8"},
+  {"name": "MBS",        "url": "https://nl.utako.moe/mbs/index.m3u8"},
+  {"name": "ABC TV",     "url": "https://nl.utako.moe/abc/index.m3u8"},
+  {"name": "関西TV",     "url": "https://nl.utako.moe/kansaitv/index.m3u8"},
+  {"name": "ytv",        "url": "https://nl.utako.moe/ytv/index.m3u8"},
+  {"name": "NHK World",  "url": "https://master.nhkworld.jp/nhkworld-tv/playlist/live.m3u8"},
+  {"name": "Weathernews","url": "https://rch01e-alive-hls.akamaized.net/38fb45b25cdb05a1/out/v1/4e907bfabc684a1dae10df8431a84d21/index.m3u8"}
+];
