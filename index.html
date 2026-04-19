@@ -19,15 +19,16 @@
     <link rel="apple-touch-icon" href="icon.png">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <script src="channels.js"></script>
+    <script src="status.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
 
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --bg:          #111e35;
-            --surface:     #182743;
-            --surface-hover: #1e3052;
+            --bg:          #1a304f;
+            --surface:     #223a5e;
+            --surface-hover: #2a456e;
             --border:      rgba(255,255,255,0.06);
             --border-hover:rgba(255,255,255,0.12);
             --text:        #e2e8f0;
@@ -47,7 +48,7 @@
         /* ── Header ── */
         .header {
             position: sticky; top: 0; z-index: 50;
-            background: rgba(17,30,53,0.9);
+            background: rgba(26,48,79,0.92);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
@@ -126,16 +127,24 @@
         .ch-sub  { font-size: 11px; color: var(--text-sub); margin-top: 2px;
                    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* ── Live pip ── */
-        .live-pip {
+        /* ── Status pip ── */
+        .status-pip {
             display: flex; align-items: center; gap: 5px;
             font-size: 9px; font-weight: 800; letter-spacing: 1px;
-            color: #ef4444; flex-shrink: 0;
+            flex-shrink: 0;
         }
-        .live-pip::before {
-            content:''; width:6px; height:6px; border-radius:50%;
-            background:#ef4444; animation: blink 2s infinite;
+        .status-pip::before {
+            content:''; width:6px; height:6px; border-radius:50%; flex-shrink:0;
         }
+        .status-pip.live   { color: #ef4444; }
+        .status-pip.live::before   { background:#ef4444; animation: blink 2s infinite; }
+        .status-pip.offline { color: #4a6080; }
+        .status-pip.offline::before { background:#4a6080; }
+        .status-pip.unknown { color: #4a6080; }
+        .status-pip.unknown::before { background:#4a6080; opacity:0.5; }
+
+        /* 오프라인 카드 살짝 흐리게 */
+        .card.is-offline { opacity: 0.55; }
 
         /* ── Card appear animation ── */
         @keyframes appear {
@@ -161,7 +170,7 @@
 
         .player-bar {
             display: flex; align-items: center; justify-content: space-between;
-            background: rgba(17,30,53,0.97);
+            background: rgba(26,48,79,0.97);
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border);
             padding: 0 16px; height: 58px; flex-shrink: 0;
@@ -205,7 +214,7 @@
     <div class="content" id="channel-list"></div>
 
     <footer class="footer">
-        <p>일본어 학습 목적의 개인 비상업적 프로젝트입니다.</p>
+        <p>A personal, non-commercial project for <strong style="color:#8ba3c0">Japanese language learning</strong>.</p>
     </footer>
 </div>
 
@@ -216,10 +225,10 @@
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="15 18 9 12 15 6"/>
             </svg>
-            뒤로
+            Back
         </div>
         <div class="player-ch-name" id="player-title"></div>
-        <button class="player-ext" id="player-ext-btn">새 탭</button>
+        <button class="player-ext" id="player-ext-btn">Open Tab</button>
     </div>
     <iframe id="video-frame"
         allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
@@ -230,20 +239,20 @@
 <script>
 // ── 채널 메타데이터 (배지 색상·서브타이틀·카테고리) ──
 const META = {
-    "NHK G":      { abbr:"NHK",  c:"#1a73e8", sub:"日本放送協会",   cat:"東京 地上波" },
-    "NHK E テレ": { abbr:"Eテレ", c:"#1a73e8", sub:"NHK教育テレビ",  cat:"東京 地上波" },
-    "NTV":        { abbr:"NTV",  c:"#e8112d", sub:"日本テレビ",     cat:"東京 地上波" },
-    "TV ASAHI":   { abbr:"EX",   c:"#00a0e9", sub:"テレビ朝日",     cat:"東京 地上波" },
-    "TBS":        { abbr:"TBS",  c:"#e8112d", sub:"TBSテレビ",      cat:"東京 地上波" },
-    "TV TOKYO":   { abbr:"TX",   c:"#009944", sub:"テレビ東京",     cat:"東京 地上波" },
-    "FUJI TV":    { abbr:"CX",   c:"#ff6e00", sub:"フジテレビ",     cat:"東京 地上波" },
-    "Tokyo MX":   { abbr:"MX",   c:"#9333ea", sub:"TOKYO MX",      cat:"東京 地上波" },
-    "MBS":        { abbr:"MBS",  c:"#e8112d", sub:"毎日放送",       cat:"関西 地上波" },
-    "ABC TV":     { abbr:"ABC",  c:"#005bab", sub:"朝日放送テレビ",  cat:"関西 地上波" },
-    "関西TV":     { abbr:"KTV",  c:"#ff6e00", sub:"関西テレビ",     cat:"関西 地上波" },
-    "ytv":        { abbr:"ytv",  c:"#e8112d", sub:"讀賣テレビ放送",  cat:"関西 地上波" },
-    "NHK World":  { abbr:"NHK",  c:"#1a73e8", sub:"NHK World-Japan",cat:"その他" },
-    "Weathernews":{ abbr:"WN",   c:"#0288d1", sub:"ウェザーニュース", cat:"その他" },
+    "NHK G":      { abbr:"NHK",  c:"#1a73e8", sub:"Japan Broadcasting Corporation", cat:"Tokyo Terrestrial" },
+    "NHK E テレ": { abbr:"Eテレ", c:"#1a73e8", sub:"NHK Educational Television",     cat:"Tokyo Terrestrial" },
+    "NTV":        { abbr:"NTV",  c:"#e8112d", sub:"Nippon Television",               cat:"Tokyo Terrestrial" },
+    "TV ASAHI":   { abbr:"EX",   c:"#00a0e9", sub:"TV Asahi",                        cat:"Tokyo Terrestrial" },
+    "TBS":        { abbr:"TBS",  c:"#e8112d", sub:"Tokyo Broadcasting System",       cat:"Tokyo Terrestrial" },
+    "TV TOKYO":   { abbr:"TX",   c:"#009944", sub:"TV Tokyo",                        cat:"Tokyo Terrestrial" },
+    "FUJI TV":    { abbr:"CX",   c:"#ff6e00", sub:"Fuji Television Network",         cat:"Tokyo Terrestrial" },
+    "Tokyo MX":   { abbr:"MX",   c:"#9333ea", sub:"Tokyo Metropolitan Television",   cat:"Tokyo Terrestrial" },
+    "MBS":        { abbr:"MBS",  c:"#e8112d", sub:"Mainichi Broadcasting System",    cat:"Kansai Terrestrial" },
+    "ABC TV":     { abbr:"ABC",  c:"#005bab", sub:"Asahi Broadcasting Television",   cat:"Kansai Terrestrial" },
+    "関西TV":     { abbr:"KTV",  c:"#ff6e00", sub:"Kansai Television",               cat:"Kansai Terrestrial" },
+    "ytv":        { abbr:"ytv",  c:"#e8112d", sub:"Yomiuri Telecasting Corporation", cat:"Kansai Terrestrial" },
+    "NHK World":  { abbr:"NHK",  c:"#1a73e8", sub:"NHK World-Japan",                 cat:"Others" },
+    "Weathernews":{ abbr:"WN",   c:"#0288d1", sub:"Weathernews Live",                cat:"Others" },
 };
 
 let hlsInstance = null;
@@ -254,13 +263,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const channels = window.CHANNELS;
 
     if (!channels || !channels.length) {
-        root.innerHTML = '<p style="text-align:center;color:#4a6080;margin-top:60px">채널을 불러올 수 없습니다.</p>';
+        root.innerHTML = '<p style="text-align:center;color:#4a6080;margin-top:60px">Failed to load channels.</p>';
         return;
     }
 
     // 카테고리별 그룹핑
     const groups = {};
-    const ORDER  = ["東京 地上波", "関西 地上波", "その他"];
+    const ORDER  = ["Tokyo Terrestrial", "Kansai Terrestrial", "Others"];
     channels.forEach(ch => {
         const cat = (META[ch.name] || {}).cat || "その他";
         if (!groups[cat]) groups[cat] = [];
@@ -279,8 +288,13 @@ document.addEventListener('DOMContentLoaded', () => {
         groups[cat].forEach(ch => {
             const m = META[ch.name] || { abbr: ch.name.slice(0,3), c: '#60a5fa', sub: '' };
             const r = hexToRgb(m.c);
+
+            const chStatus = (window.STATUS && window.STATUS.channels) ? window.STATUS.channels[ch.name] : null;
+            const pipClass = chStatus === 'live' ? 'live' : chStatus === 'offline' ? 'offline' : 'unknown';
+            const pipLabel = chStatus === 'offline' ? 'OFF AIR' : 'LIVE';
+
             const card = document.createElement('div');
-            card.className = 'card';
+            card.className = 'card' + (chStatus === 'offline' ? ' is-offline' : '');
             card.style.cssText = [
                 `--badge-color:${m.c}`,
                 `--badge-bg:rgba(${r},0.12)`,
@@ -293,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="ch-name">${ch.name}</div>
                     <div class="ch-sub">${m.sub}</div>
                 </div>
-                <div class="live-pip">LIVE</div>`;
+                <div class="status-pip ${pipClass}">${pipLabel}</div>`;
             card.onclick = () => openPlayer(ch.url, ch.name);
             root.appendChild(card);
             delay += 0.05;

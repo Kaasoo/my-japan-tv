@@ -24,11 +24,6 @@ CHANNELS = [
 def main():
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
-    json_path = os.path.join(current_dir, 'channels.json')
-    with open(json_path, 'w', encoding='utf-8') as f:
-        json.dump(CHANNELS, f, ensure_ascii=False, indent=2)
-    print(f"✅ channels.json 저장 완료")
-
     js_path = os.path.join(current_dir, 'channels.js')
     js_content = "window.CHANNELS = " + json.dumps(CHANNELS, ensure_ascii=False, indent=2) + ";\n"
     with open(js_path, 'w', encoding='utf-8') as f:

@@ -1,0 +1,1 @@
+window.STATUS = {"updated": "2026-04-19T01:31:53Z", "channels": {"TBS": "live", "TV TOKYO": "live", "TV ASAHI": "live", "NHK G": "live", "NHK E テレ": "live", "FUJI TV": "offline", "Tokyo MX": "live", "NTV": "live", "Weathernews": "live", "NHK World": "live", "ytv": "live", "MBS": "live", "ABC TV": "live", "関西TV": "live"}};
