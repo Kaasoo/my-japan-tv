@@ -5,7 +5,7 @@ window.CHANNELS = [
   {"name": "TV ASAHI",   "url": "https://nl.utako.moe/TV_Asahi/index.m3u8"},
   {"name": "TBS",        "url": "https://nl.utako.moe/TBS/index.m3u8"},
   {"name": "TV TOKYO",   "url": "https://nl.utako.moe/TV_Tokyo/index.m3u8"},
-  {"name": "FUJI TV",    "url": "https://nl.utako.moe/Fuji_TV/index.m3u8"},
+  {"name": "FUJI TV",    "url": "https://fujitv4.mov3.co/hls/fujitv.m3u8"},
   {"name": "Tokyo MX",   "url": "https://nl.utako.moe/Tokyo_MX1/index.m3u8"},
   {"name": "MBS",        "url": "https://nl.utako.moe/mbs/index.m3u8"},
   {"name": "ABC TV",     "url": "https://nl.utako.moe/abc/index.m3u8"},
