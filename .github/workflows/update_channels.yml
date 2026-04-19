@@ -1,15 +1,15 @@
-name: Hourly Channel Update & Status Check
+name: Hourly Status Check
 
 on:
   schedule:
-    - cron: '0 * * * *'   # 매 시 정각 (UTC)
-  workflow_dispatch:        # 수동 실행 버튼 유지
+    - cron: '0 * * * *'  # 매 시 정각 (UTC)
+  workflow_dispatch:       # 수동 실행 버튼 유지
 
 permissions:
   contents: write
 
 jobs:
-  update:
+  check:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -20,19 +20,13 @@ jobs:
         with:
           python-version: '3.11'
 
-      # channels.js / channels.json 갱신 (Playwright 불필요 — 정적 URL)
-      - name: Update channels
-        run: python fetch_source_url.py
-
-      # 각 채널 스트림 상태 확인 → status.js / status.json 생성
       - name: Check stream status
         run: python check_status.py
 
-      # 변경된 파일을 커밋 & 푸시
       - name: Commit and Push
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add channels.js status.js
-          git commit -m "Auto-update channels & status [skip ci]" || echo "No changes to commit"
+          git add status.js
+          git commit -m "Auto-update status [skip ci]" || echo "No changes to commit"
           git push origin main
