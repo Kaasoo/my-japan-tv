@@ -32,36 +32,8 @@ HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     'Accept': '*/*',
     'Referer': 'https://web.utako.moe/',
+    'Origin': 'https://kaasoo.github.io',  # CORS 체크용 Origin 헤더
 }
-
-def fetch_text(url, timeout=12, method='GET', max_bytes=2048):
-    """URL을 요청해서 텍스트를 반환. 실패시 None."""
-    try:
-        req = urllib.request.Request(url, headers=HEADERS, method=method)
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
-            if resp.status == 200:
-                return resp.read(max_bytes).decode('utf-8', errors='ignore')
-    except Exception:
-        pass
-    return None
-
-def resolve_url(base_url, path):
-    """상대경로를 절대 URL로 변환."""
-    if path.startswith('http://') or path.startswith('https://'):
-        return path
-    # base_url에서 마지막 '/' 이전까지 추출
-    base = base_url.rsplit('/', 1)[0]
-    return base + '/' + path
-
-def check_segment(seg_url, timeout=10):
-    """세그먼트 URL이 실제로 접근 가능한지 HEAD 요청으로 확인."""
-    try:
-        req = urllib.request.Request(seg_url, headers=HEADERS, method='HEAD')
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
-            return resp.status == 200
-    except Exception:
-        pass
-    return False
 
 # CDN 도메인은 세그먼트에 토큰/세션이 필요해 HEAD 요청이 막히는 경우가 있음
 # → variant m3u8까지만 확인하고 세그먼트 체크는 생략
@@ -70,17 +42,46 @@ CDN_DOMAINS = ('akamaized.net', 'cloudfront.net', 'fastly.net', 'nhkworld.jp')
 def is_cdn_url(url):
     return any(d in url for d in CDN_DOMAINS)
 
+def is_cors_ok(headers):
+    """응답 헤더에서 CORS 허용 여부 확인. * 또는 유효한 origin이면 True."""
+    acao = headers.get('Access-Control-Allow-Origin', '')
+    # '0', '' 는 유효하지 않음. '*' 또는 특정 도메인이어야 함
+    return acao == '*' or (acao.startswith('http') and len(acao) > 4)
+
+def fetch_with_info(url, timeout=12, method='GET', max_bytes=2048):
+    """URL을 요청해서 (텍스트, 응답헤더) 반환. 실패시 (None, None)."""
+    try:
+        req = urllib.request.Request(url, headers=HEADERS, method=method)
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            if resp.status == 200:
+                text = resp.read(max_bytes).decode('utf-8', errors='ignore')
+                return text, resp.headers
+    except Exception:
+        pass
+    return None, None
+
+def fetch_text(url, timeout=12, method='GET', max_bytes=2048):
+    text, _ = fetch_with_info(url, timeout, method, max_bytes)
+    return text
+
+def resolve_url(base_url, path):
+    """상대경로를 절대 URL로 변환."""
+    if path.startswith('http://') or path.startswith('https://'):
+        return path
+    base = base_url.rsplit('/', 1)[0]
+    return base + '/' + path
+
 def check_m3u8(url, timeout=12):
     """
-    m3u8 URL의 스트림 상태를 최대 3단계로 확인:
-      1단계: m3u8 파일 접근 가능 여부 (HTTP 200 + #EXTM3U)
-      2단계: 마스터 플레이리스트라면 첫 번째 variant URL로 이동 후 접근 확인
-      3단계: CDN이 아닌 경우에만 실제 .ts 세그먼트 HEAD 요청으로 최종 확인
+    m3u8 URL의 스트림 상태를 최대 2단계로 확인:
+      1단계: m3u8 접근 가능 (#EXTM3U 포함) + CORS 헤더 확인
+      2단계: 마스터 플레이리스트라면 첫 번째 variant m3u8도 확인
+             (세그먼트는 5초마다 교체되므로 타이밍 오류 방지를 위해 체크 안 함)
+    CORS는 같은 서버의 모든 리소스에 동일하게 적용되므로
+    m3u8 응답의 CORS 헤더만 확인해도 충분합니다.
     """
-    content = fetch_text(url, timeout=timeout)
-    if not content:
-        return False
-    if '#EXTM3U' not in content:
+    content, resp_headers = fetch_with_info(url, timeout=timeout)
+    if not content or '#EXTM3U' not in content:
         return False
 
     # --- 2단계: 마스터 플레이리스트 처리 ---
@@ -92,35 +93,20 @@ def check_m3u8(url, timeout=12):
                 variant_url = resolve_url(url, line)
                 break
         if not variant_url:
-            return True
-        # CDN variant는 URL 접근만 확인 (세그먼트 체크 불필요)
-        if is_cdn_url(variant_url):
-            variant_content = fetch_text(variant_url, timeout=timeout)
-            return bool(variant_content and '#EXTM3U' in variant_content)
-        content = fetch_text(variant_url, timeout=timeout)
-        if not content:
+            return is_cors_ok(resp_headers)
+
+        variant_content, variant_headers = fetch_with_info(variant_url, timeout=timeout)
+        if not variant_content or '#EXTM3U' not in variant_content:
             return False
-        url = variant_url
 
-    # --- 3단계: 세그먼트 확인 (CDN이 아닌 경우만) ---
+        # variant m3u8의 CORS 헤더로 최종 판단
+        return is_cors_ok(variant_headers)
+
+    # 미디어 플레이리스트: 세그먼트가 있는지 + CORS 확인
     if '#EXTINF' not in content:
-        return True
+        return False  # 세그먼트 없으면 스트림 중단으로 판단
 
-    # CDN 기반 미디어 플레이리스트는 세그먼트 체크 생략
-    if is_cdn_url(url):
-        return True
-
-    seg_url = None
-    for line in content.splitlines():
-        line = line.strip()
-        if line and not line.startswith('#'):
-            seg_url = resolve_url(url, line)
-            break
-
-    if not seg_url:
-        return True
-
-    return check_segment(seg_url)
+    return is_cors_ok(resp_headers)
 
 def check_embed(url, timeout=12):
     """iframe embed URL의 HTTP 상태를 확인합니다."""
