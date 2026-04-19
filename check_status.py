@@ -1,12 +1,14 @@
-import sys, io
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
-
+import sys
 import json
 import os
 import urllib.request
 import urllib.error
 from datetime import datetime, timezone
 from concurrent.futures import ThreadPoolExecutor, as_completed
+
+# Windows 콘솔 인코딩 보정 (GitHub Actions Ubuntu는 이미 UTF-8)
+if sys.platform == 'win32':
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
 # 확인할 채널 목록 (channels.js와 동일하게 유지)
 CHANNELS = [
