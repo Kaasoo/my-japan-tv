@@ -206,13 +206,6 @@
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
             text-align: center;
         }
-        .player-ext {
-            background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.25);
-            color: #60a5fa; padding: 7px 14px; border-radius: 8px;
-            font-size: 11px; font-weight: 700; cursor: pointer; flex-shrink: 0;
-            transition: background 0.15s;
-        }
-        .player-ext:hover { background: rgba(96,165,250,0.22); }
 
         #video-frame { width:100%; flex:1; border:none; background:#000; }
         #hls-video   { width:100%; flex:1; background:#000; display:none; outline:none; }
@@ -257,7 +250,6 @@
             Back
         </div>
         <div class="player-ch-name" id="player-title"></div>
-        <button class="player-ext" id="player-ext-btn">Open Tab</button>
     </div>
     <iframe id="video-frame"
         allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
@@ -381,7 +373,6 @@ function openPlayer(url, name) {
     const vid   = document.getElementById('hls-video');
     document.getElementById('player-title').textContent = name;
 
-    document.getElementById('player-ext-btn').onclick = () => window.open(url, '_blank');
 
     if (url.includes('.m3u8')) {
         frame.style.display = 'none'; frame.src = '';
