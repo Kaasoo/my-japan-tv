@@ -34,17 +34,93 @@ HEADERS = {
     'Referer': 'https://web.utako.moe/',
 }
 
-def check_m3u8(url, timeout=12):
-    """m3u8 URL에 요청을 보내 스트림이 살아있는지 확인합니다."""
+def fetch_text(url, timeout=12, method='GET', max_bytes=2048):
+    """URL을 요청해서 텍스트를 반환. 실패시 None."""
     try:
-        req = urllib.request.Request(url, headers=HEADERS)
+        req = urllib.request.Request(url, headers=HEADERS, method=method)
         with urllib.request.urlopen(req, timeout=timeout) as resp:
             if resp.status == 200:
-                content = resp.read(512).decode('utf-8', errors='ignore')
-                return '#EXTM3U' in content or '#EXT-X-STREAM-INF' in content or '#EXTINF' in content
+                return resp.read(max_bytes).decode('utf-8', errors='ignore')
+    except Exception:
+        pass
+    return None
+
+def resolve_url(base_url, path):
+    """상대경로를 절대 URL로 변환."""
+    if path.startswith('http://') or path.startswith('https://'):
+        return path
+    # base_url에서 마지막 '/' 이전까지 추출
+    base = base_url.rsplit('/', 1)[0]
+    return base + '/' + path
+
+def check_segment(seg_url, timeout=10):
+    """세그먼트 URL이 실제로 접근 가능한지 HEAD 요청으로 확인."""
+    try:
+        req = urllib.request.Request(seg_url, headers=HEADERS, method='HEAD')
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            return resp.status == 200
     except Exception:
         pass
     return False
+
+# CDN 도메인은 세그먼트에 토큰/세션이 필요해 HEAD 요청이 막히는 경우가 있음
+# → variant m3u8까지만 확인하고 세그먼트 체크는 생략
+CDN_DOMAINS = ('akamaized.net', 'cloudfront.net', 'fastly.net', 'nhkworld.jp')
+
+def is_cdn_url(url):
+    return any(d in url for d in CDN_DOMAINS)
+
+def check_m3u8(url, timeout=12):
+    """
+    m3u8 URL의 스트림 상태를 최대 3단계로 확인:
+      1단계: m3u8 파일 접근 가능 여부 (HTTP 200 + #EXTM3U)
+      2단계: 마스터 플레이리스트라면 첫 번째 variant URL로 이동 후 접근 확인
+      3단계: CDN이 아닌 경우에만 실제 .ts 세그먼트 HEAD 요청으로 최종 확인
+    """
+    content = fetch_text(url, timeout=timeout)
+    if not content:
+        return False
+    if '#EXTM3U' not in content:
+        return False
+
+    # --- 2단계: 마스터 플레이리스트 처리 ---
+    if '#EXT-X-STREAM-INF' in content:
+        variant_url = None
+        for line in content.splitlines():
+            line = line.strip()
+            if line and not line.startswith('#'):
+                variant_url = resolve_url(url, line)
+                break
+        if not variant_url:
+            return True
+        # CDN variant는 URL 접근만 확인 (세그먼트 체크 불필요)
+        if is_cdn_url(variant_url):
+            variant_content = fetch_text(variant_url, timeout=timeout)
+            return bool(variant_content and '#EXTM3U' in variant_content)
+        content = fetch_text(variant_url, timeout=timeout)
+        if not content:
+            return False
+        url = variant_url
+
+    # --- 3단계: 세그먼트 확인 (CDN이 아닌 경우만) ---
+    if '#EXTINF' not in content:
+        return True
+
+    # CDN 기반 미디어 플레이리스트는 세그먼트 체크 생략
+    if is_cdn_url(url):
+        return True
+
+    seg_url = None
+    for line in content.splitlines():
+        line = line.strip()
+        if line and not line.startswith('#'):
+            seg_url = resolve_url(url, line)
+            break
+
+    if not seg_url:
+        return True
+
+    return check_segment(seg_url)
 
 def check_embed(url, timeout=12):
     """iframe embed URL의 HTTP 상태를 확인합니다."""
@@ -70,7 +146,6 @@ def main():
 
     statuses = {}
 
-    # 병렬로 모든 채널을 동시 확인 (속도 향상)
     with ThreadPoolExecutor(max_workers=8) as executor:
         futures = {executor.submit(check_channel, ch): ch for ch in CHANNELS}
         for future in as_completed(futures):
@@ -85,7 +160,6 @@ def main():
         'channels': statuses,
     }
 
-    # status.js 저장 (index.html 파일 직접 열기 호환)
     js_path = os.path.join(current_dir, 'status.js')
     with open(js_path, 'w', encoding='utf-8') as f:
         f.write("window.STATUS = " + json.dumps(result, ensure_ascii=False) + ";\n")
