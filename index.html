@@ -255,6 +255,10 @@
         allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
         allowfullscreen referrerpolicy="no-referrer-when-downgrade" src=""></iframe>
     <video id="hls-video" controls autoplay playsinline></video>
+    <div id="player-error" style="display:none; position:absolute; inset:0; top:48px; background:#000; color:#f87171; display:none; align-items:center; justify-content:center; flex-direction:column; gap:12px; font-size:14px; text-align:center; padding:24px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="40" height="40"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="player-error-msg">Stream unavailable</span>
+    </div>
 </div>
 
 <script>
@@ -278,7 +282,6 @@ const META = {
     "CNN":        { abbr:"CNN",  c:"#cc0001", sub:"Cable News Network",              cat:"US News" },
     "Fox News":   { abbr:"FOX",  c:"#003399", sub:"Fox News Channel",                cat:"US News" },
     "NBC News":   { abbr:"NBC",  c:"#fa4616", sub:"NBC News NOW",                    cat:"US News" },
-    "CNBC":       { abbr:"CNBC", c:"#004fee", sub:"Consumer News and Business Channel", cat:"US News" },
     "Newsmax":    { abbr:"NMX",  c:"#e8112d", sub:"Newsmax TV",                      cat:"US News" },
     // International
     "DW News":    { abbr:"DW",   c:"#005fc9", sub:"Deutsche Welle English",          cat:"International" },
@@ -382,15 +385,29 @@ function openPlayer(url, name) {
     document.getElementById('player-title').textContent = name;
 
 
+    const errBox = document.getElementById('player-error');
+    const errMsg = document.getElementById('player-error-msg');
+    errBox.style.display = 'none';
+
     if (url.includes('.m3u8')) {
         frame.style.display = 'none'; frame.src = '';
         vid.style.display   = 'block';
         if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
         if (typeof Hls !== 'undefined' && Hls.isSupported()) {
-            hlsInstance = new Hls({ enableWorker: false });
+            hlsInstance = new Hls({ enableWorker: false, manifestLoadingTimeOut: 10000 });
             hlsInstance.loadSource(url);
             hlsInstance.attachMedia(vid);
             hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => vid.play().catch(()=>{}));
+            hlsInstance.on(Hls.Events.ERROR, (_, data) => {
+                if (data.fatal) {
+                    vid.style.display = 'none';
+                    errMsg.textContent = data.type === 'networkError'
+                        ? 'Network error — stream may be unavailable or blocked (CORS)'
+                        : `Playback error: ${data.details}`;
+                    errBox.style.display = 'flex';
+                    hlsInstance.destroy(); hlsInstance = null;
+                }
+            });
         } else if (vid.canPlayType('application/vnd.apple.mpegurl')) {
             vid.src = url; vid.play().catch(()=>{});
         }
@@ -413,6 +430,7 @@ function closePlayer() {
     if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
     vid.src = ''; vid.style.display = 'none';
     frame.src = ''; frame.style.display = 'block';
+    document.getElementById('player-error').style.display = 'none';
     wrap.classList.remove('open');
     document.body.style.overflow = 'auto';
 }
