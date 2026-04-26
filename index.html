@@ -10,7 +10,7 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MY JAPAN LIVE TV</title>
+    <title>My Live TV</title>
 
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#080e1a">
@@ -218,7 +218,7 @@
     <header class="header">
         <div class="header-logo">
             <img src="icon.png" alt="icon">
-            <span class="header-title">JAPAN LIVE TV</span>
+            <span class="header-title">MY LIVE TV</span>
         </div>
         <div class="header-badge">LIVE</div>
     </header>
@@ -236,7 +236,7 @@
     <div class="content" id="channel-list"></div>
 
     <footer class="footer">
-        <p>A personal, non-commercial project for <strong style="color:#8ba3c0">Japanese language learning</strong>.</p>
+        <p>A personal, non-commercial live TV viewer.</p>
     </footer>
 </div>
 
@@ -274,6 +274,14 @@ const META = {
     "ytv":        { abbr:"ytv",  c:"#e8112d", sub:"Yomiuri Telecasting Corporation", cat:"Kansai Terrestrial" },
     "NHK World":  { abbr:"NHK",  c:"#1a73e8", sub:"NHK World-Japan",                 cat:"Others" },
     "Weathernews":{ abbr:"WN",   c:"#0288d1", sub:"Weathernews Live",                cat:"Others" },
+    // US News
+    "CNN":        { abbr:"CNN",  c:"#cc0001", sub:"Cable News Network",              cat:"US News" },
+    "Fox News":   { abbr:"FOX",  c:"#003399", sub:"Fox News Channel",                cat:"US News" },
+    "NBC News":   { abbr:"NBC",  c:"#fa4616", sub:"NBC News NOW",                    cat:"US News" },
+    "CNBC":       { abbr:"CNBC", c:"#004fee", sub:"Consumer News and Business Channel", cat:"US News" },
+    "Newsmax":    { abbr:"NMX",  c:"#e8112d", sub:"Newsmax TV",                      cat:"US News" },
+    // International
+    "DW News":    { abbr:"DW",   c:"#005fc9", sub:"Deutsche Welle English",          cat:"International" },
 };
 
 let hlsInstance = null;

@@ -1,8 +1,8 @@
 {
-  "short_name": "JAPAN TV",
-  "name": "JAPAN LIVE TV",
+  "short_name": "My Live TV",
+  "name": "My Live TV",
   "display": "standalone",
-  "start_url": "/my-japan-tv/", 
+  "start_url": "/my-japan-tv/",
   "scope": "/my-japan-tv/",
   "theme_color": "#121212",
   "background_color": "#121212",

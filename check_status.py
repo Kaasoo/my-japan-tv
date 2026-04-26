@@ -3,6 +3,7 @@ import json
 import os
 import urllib.request
 import urllib.error
+import urllib.parse
 from datetime import datetime, timezone
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -26,12 +27,19 @@ CHANNELS = [
     {"name": "ytv",         "url": "https://nl.utako.moe/ytv/index.m3u8"},
     {"name": "NHK World",   "url": "https://master.nhkworld.jp/nhkworld-tv/playlist/live.m3u8"},
     {"name": "Weathernews", "url": "https://rch01e-alive-hls.akamaized.net/38fb45b25cdb05a1/out/v1/4e907bfabc684a1dae10df8431a84d21/index.m3u8"},
+    # US News
+    {"name": "CNN",         "url": "https://rtmp2.livenewsof.com/livenewsof.com/qJbteqvER7/1.m3u8"},
+    {"name": "Fox News",    "url": "https://rtmp2.livenewsof.com/livenewsof.com/qJbteqvER7/5.m3u8"},
+    {"name": "NBC News",    "url": "https://d1bl6tskrpq9ze.cloudfront.net/hls/master.m3u8?ads.xumo_channelId=99984003"},
+    {"name": "CNBC",        "url": "https://stream.livenewsplay.com:9443/hls/cnbc/cnbcsd.m3u8"},
+    {"name": "Newsmax",     "url": "https://nmx1ota.akamaized.net/hls/live/2107010/Live_1/index.m3u8"},
+    # International
+    {"name": "DW News",     "url": "https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8"},
 ]
 
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     'Accept': '*/*',
-    'Referer': 'https://web.utako.moe/',
     'Origin': 'https://kaasoo.github.io',  # CORS 체크용 Origin 헤더
 }
 
@@ -65,11 +73,8 @@ def fetch_text(url, timeout=12, method='GET', max_bytes=2048):
     return text
 
 def resolve_url(base_url, path):
-    """상대경로를 절대 URL로 변환."""
-    if path.startswith('http://') or path.startswith('https://'):
-        return path
-    base = base_url.rsplit('/', 1)[0]
-    return base + '/' + path
+    """상대경로를 절대 URL로 변환 (../도 올바르게 처리)."""
+    return urllib.parse.urljoin(base_url, path)
 
 def check_m3u8(url, timeout=12):
     """
