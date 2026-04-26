@@ -344,24 +344,23 @@ function renderLastChecked() {
 }
 
 // ── 채널 목록 렌더링 ──
-document.addEventListener('DOMContentLoaded', () => {
-    renderLastChecked();
+const JAPAN_CATS = ["Tokyo Terrestrial", "Kansai Terrestrial", "Others"];
+const WORLD_CATS = ["US News", "International"];
 
+function renderChannels() {
     const root = document.getElementById('channel-list');
     const channels = window.CHANNELS;
+    root.innerHTML = '';
 
     if (!channels || !channels.length) {
         root.innerHTML = '<p style="text-align:center;color:#4a6080;margin-top:60px">Failed to load channels.</p>';
         return;
     }
 
-    // 카테고리별 그룹핑
-    const groups = {};
-    const JAPAN_CATS = ["Tokyo Terrestrial", "Kansai Terrestrial", "Others"];
-    const WORLD_CATS = ["US News", "International"];
-    const activeTab  = window._activeTab || 'japan';
-    const ORDER      = activeTab === 'japan' ? JAPAN_CATS : WORLD_CATS;
+    const activeTab = window._activeTab || 'japan';
+    const ORDER     = activeTab === 'japan' ? JAPAN_CATS : WORLD_CATS;
 
+    const groups = {};
     channels.forEach(ch => {
         const cat = (META[ch.name] || {}).cat || "その他";
         if (!groups[cat]) groups[cat] = [];
@@ -405,6 +404,11 @@ document.addEventListener('DOMContentLoaded', () => {
             delay += 0.05;
         });
     });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    renderLastChecked();
+    renderChannels();
 });
 
 function hexToRgb(hex) {
