@@ -403,7 +403,15 @@ function renderChannels() {
                 </div>
                 ${linkIcon}
                 <div class="status-pip ${pipClass}">${pipLabel}</div>`;
-            card.onclick = () => ch.link ? window.open(ch.url, '_blank') : openPlayer(ch.url, ch.name);
+            card.onclick = () => {
+                if (ch.link) {
+                    const a = document.createElement('a');
+                    a.href = ch.url; a.target = '_blank'; a.rel = 'noreferrer noopener';
+                    a.click();
+                } else {
+                    openPlayer(ch.url, ch.name);
+                }
+            };
             root.appendChild(card);
             delay += 0.05;
         });
