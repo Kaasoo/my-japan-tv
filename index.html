@@ -392,14 +392,18 @@ function renderChannels() {
                 `--badge-border:rgba(${r},0.25)`,
                 `animation: appear 0.4s ease forwards ${delay}s`,
             ].join(';');
+            const linkIcon = ch.link
+                ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13" style="opacity:0.45;flex-shrink:0"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`
+                : '';
             card.innerHTML = `
                 <div class="badge">${m.abbr}</div>
                 <div class="info">
                     <div class="ch-name">${ch.name}</div>
                     <div class="ch-sub">${m.sub}</div>
                 </div>
+                ${linkIcon}
                 <div class="status-pip ${pipClass}">${pipLabel}</div>`;
-            card.onclick = () => openPlayer(ch.url, ch.name);
+            card.onclick = () => ch.link ? window.open(ch.url, '_blank') : openPlayer(ch.url, ch.name);
             root.appendChild(card);
             delay += 0.05;
         });
