@@ -318,7 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 카테고리별 그룹핑
     const groups = {};
-    const ORDER  = ["Tokyo Terrestrial", "Kansai Terrestrial", "Others"];
+    const ORDER  = ["Tokyo Terrestrial", "Kansai Terrestrial", "Others", "US News", "International"];
     channels.forEach(ch => {
         const cat = (META[ch.name] || {}).cat || "その他";
         if (!groups[cat]) groups[cat] = [];
