@@ -311,6 +311,8 @@ const META = {
     "Fox News":   { abbr:"FOX",  c:"#003399", sub:"Fox News Channel",                cat:"US News" },
     "NBC News":   { abbr:"NBC",  c:"#fa4616", sub:"NBC News NOW",                    cat:"US News" },
     "Newsmax":    { abbr:"NMX",  c:"#e8112d", sub:"Newsmax TV",                      cat:"US News" },
+    // Korea
+    "SBS":        { abbr:"SBS",  c:"#0055a4", sub:"Seoul Broadcasting System",       cat:"Korea" },
     // International
     "DW News":    { abbr:"DW",   c:"#005fc9", sub:"Deutsche Welle English",          cat:"International" },
 };
@@ -345,7 +347,7 @@ function renderLastChecked() {
 
 // ── 채널 목록 렌더링 ──
 const JAPAN_CATS = ["Tokyo Terrestrial", "Kansai Terrestrial", "Others"];
-const WORLD_CATS = ["US News", "International"];
+const WORLD_CATS = ["US News", "Korea", "International"];
 
 function renderChannels() {
     const root = document.getElementById('channel-list');

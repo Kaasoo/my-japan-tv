@@ -32,6 +32,8 @@ CHANNELS = [
     {"name": "Fox News",    "url": "https://rtmp2.livenewsof.com/livenewsof.com/qJbteqvER7/5.m3u8"},
     {"name": "NBC News",    "url": "https://d1bl6tskrpq9ze.cloudfront.net/hls/master.m3u8?ads.xumo_channelId=99984003"},
     {"name": "Newsmax",     "url": "https://nmx1ota.akamaized.net/hls/live/2107010/Live_1/index.m3u8"},
+    # Korea
+    {"name": "SBS",         "url": "https://jtvonair.sbsoft.net/jtv_live/myStream/playlist.m3u8"},
     # International
     {"name": "DW News",     "url": "https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8"},
 ]
