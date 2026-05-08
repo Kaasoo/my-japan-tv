@@ -25,7 +25,7 @@ CHANNELS = [
     {"name": "ABC TV",      "url": "https://nl.utako.moe/abc/index.m3u8"},
     {"name": "関西TV",      "url": "https://nl.utako.moe/kansaitv/index.m3u8"},
     {"name": "ytv",         "url": "https://nl.utako.moe/ytv/index.m3u8"},
-    {"name": "NHK World",   "url": "https://master.nhkworld.jp/nhkworld-tv/playlist/live.m3u8"},
+    {"name": "NHK World",   "url": "https://media-tyo.hls.nhkworld.jp/hls/w/live/master.m3u8"},
     {"name": "Weathernews", "url": "https://rch01e-alive-hls.akamaized.net/38fb45b25cdb05a1/out/v1/4e907bfabc684a1dae10df8431a84d21/index.m3u8"},
     # US News
     {"name": "CNN",         "url": "https://rtmp2.livenewsof.com/livenewsof.com/qJbteqvER7/1.m3u8"},
