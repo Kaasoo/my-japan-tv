@@ -1,12 +1,12 @@
 window.CHANNELS = [
   // Japan
-  {"name": "NHK G",      "url": "https://mov3.co/embednhk.html"},
+  {"name": "NHK G",      "url": "https://mov3.co/embednhk.html",     "link": true},
   {"name": "NHK E テレ", "url": "https://nl.utako.moe/NHK_E/index.m3u8"},
-  {"name": "NTV",        "url": "https://mov3.co/embedntv.html"},
-  {"name": "TV ASAHI",   "url": "https://mov3.co/embedtvasahi.html"},
-  {"name": "TBS",        "url": "https://mov3.co/embedtbs.html"},
-  {"name": "TV TOKYO",   "url": "https://mov3.co/embedtvtokyo.html"},
-  {"name": "FUJI TV",    "url": "https://mov3.co/embedfujitv.html"},
+  {"name": "NTV",        "url": "https://mov3.co/embedntv.html",     "link": true},
+  {"name": "TV ASAHI",   "url": "https://mov3.co/embedtvasahi.html", "link": true},
+  {"name": "TBS",        "url": "https://mov3.co/embedtbs.html",     "link": true},
+  {"name": "TV TOKYO",   "url": "https://mov3.co/embedtvtokyo.html", "link": true},
+  {"name": "FUJI TV",    "url": "https://mov3.co/embedfujitv.html",  "link": true},
   {"name": "Tokyo MX",   "url": "https://nl.utako.moe/Tokyo_MX1/index.m3u8"},
   {"name": "MBS",        "url": "https://nl.utako.moe/mbs/index.m3u8"},
   {"name": "ABC TV",     "url": "https://nl.utako.moe/abc/index.m3u8"},
