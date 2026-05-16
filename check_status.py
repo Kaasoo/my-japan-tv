@@ -13,7 +13,7 @@ if sys.platform == 'win32':
 
 # 확인할 채널 목록 (channels.js와 동일하게 유지)
 CHANNELS = [
-    {"name": "NHK G",       "url": "https://nl.utako.moe/NHK_G/index.m3u8"},
+    {"name": "NHK G",       "url": "https://newssimul-stream.nhk.jp/hls/live/2010561/nhknewssimul/master.m3u8"},
     {"name": "NHK E テレ",  "url": "https://nl.utako.moe/NHK_E/index.m3u8"},
     {"name": "NTV",         "url": "https://nl.utako.moe/Nippon_TV/index.m3u8"},
     {"name": "TV ASAHI",    "url": "https://nl.utako.moe/TV_Asahi/index.m3u8"},
