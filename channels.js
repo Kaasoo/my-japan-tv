@@ -1,12 +1,12 @@
 window.CHANNELS = [
   // Japan
-  {"name": "NHK G",      "url": "https://newssimul-stream.nhk.jp/hls/live/2010561/nhknewssimul/master.m3u8"},
+  {"name": "NHK G",      "url": "https://mov3.co/nhk/",     "link": true},
   {"name": "NHK E テレ", "url": "https://nl.utako.moe/NHK_E/index.m3u8"},
-  {"name": "NTV",        "url": "https://nl.utako.moe/Nippon_TV/index.m3u8"},
-  {"name": "TV ASAHI",   "url": "https://nl.utako.moe/TV_Asahi/index.m3u8"},
-  {"name": "TBS",        "url": "https://nl.utako.moe/TBS/index.m3u8"},
-  {"name": "TV TOKYO",   "url": "https://nl.utako.moe/TV_Tokyo/index.m3u8"},
-  {"name": "FUJI TV",    "url": "https://cdn.inteltelevision.com/fjtv/fujitv/playlist.m3u8?t=1777802712&token=c8bc4f0dd553ab2e103728d2c80b7135"},
+  {"name": "NTV",        "url": "https://mov3.co/ntv/",     "link": true},
+  {"name": "TV ASAHI",   "url": "https://mov3.co/tvasahi/", "link": true},
+  {"name": "TBS",        "url": "https://mov3.co/tbs/",     "link": true},
+  {"name": "TV TOKYO",   "url": "https://mov3.co/tvtokyo/", "link": true},
+  {"name": "FUJI TV",    "url": "https://mov3.co/fujitv/",  "link": true},
   {"name": "Tokyo MX",   "url": "https://nl.utako.moe/Tokyo_MX1/index.m3u8"},
   {"name": "MBS",        "url": "https://nl.utako.moe/mbs/index.m3u8"},
   {"name": "ABC TV",     "url": "https://nl.utako.moe/abc/index.m3u8"},

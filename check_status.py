@@ -13,13 +13,13 @@ if sys.platform == 'win32':
 
 # 확인할 채널 목록 (channels.js와 동일하게 유지)
 CHANNELS = [
-    {"name": "NHK G",       "url": "https://newssimul-stream.nhk.jp/hls/live/2010561/nhknewssimul/master.m3u8"},
+    {"name": "NHK G",       "url": "https://nhk4.mov3.co/hls/nhk.m3u8",         "no_cors": True},
     {"name": "NHK E テレ",  "url": "https://nl.utako.moe/NHK_E/index.m3u8"},
-    {"name": "NTV",         "url": "https://nl.utako.moe/Nippon_TV/index.m3u8"},
-    {"name": "TV ASAHI",    "url": "https://nl.utako.moe/TV_Asahi/index.m3u8"},
-    {"name": "TBS",         "url": "https://nl.utako.moe/TBS/index.m3u8"},
-    {"name": "TV TOKYO",    "url": "https://nl.utako.moe/TV_Tokyo/index.m3u8"},
-    {"name": "FUJI TV",     "url": "https://cdn.inteltelevision.com/fjtv/fujitv/playlist.m3u8?t=1777802712&token=c8bc4f0dd553ab2e103728d2c80b7135"},
+    {"name": "NTV",         "url": "https://ntv5.mov3.co/hls/ntv.m3u8",         "no_cors": True},
+    {"name": "TV ASAHI",    "url": "https://tvasahi.mov3.co/hls/tvasahi.m3u8",  "no_cors": True},
+    {"name": "TBS",         "url": "https://tbs5.mov3.co/hls/tbs.m3u8",         "no_cors": True},
+    {"name": "TV TOKYO",    "url": "https://tvtokyo.mov3.co/hls/tvtokyo.m3u8",  "no_cors": True},
+    {"name": "FUJI TV",     "url": "https://fujitv4.mov3.co/hls/fujitv.m3u8",   "no_cors": True},
     {"name": "Tokyo MX",    "url": "https://nl.utako.moe/Tokyo_MX1/index.m3u8"},
     {"name": "MBS",         "url": "https://nl.utako.moe/mbs/index.m3u8"},
     {"name": "ABC TV",      "url": "https://nl.utako.moe/abc/index.m3u8"},
@@ -77,18 +77,21 @@ def resolve_url(base_url, path):
     """상대경로를 절대 URL로 변환 (../도 올바르게 처리)."""
     return urllib.parse.urljoin(base_url, path)
 
-def check_m3u8(url, timeout=12):
+def check_m3u8(url, timeout=12, no_cors=False):
     """
     m3u8 URL의 스트림 상태를 최대 2단계로 확인:
       1단계: m3u8 접근 가능 (#EXTM3U 포함) + CORS 헤더 확인
       2단계: 마스터 플레이리스트라면 첫 번째 variant m3u8도 확인
-             (세그먼트는 5초마다 교체되므로 타이밍 오류 방지를 위해 체크 안 함)
-    CORS는 같은 서버의 모든 리소스에 동일하게 적용되므로
-    m3u8 응답의 CORS 헤더만 확인해도 충분합니다.
+    no_cors=True 이면 CORS 체크 없이 스트림 생존 여부만 확인
+    (link:true 로 외부 페이지를 여는 채널에 사용)
     """
     content, resp_headers = fetch_with_info(url, timeout=timeout)
     if not content or '#EXTM3U' not in content:
         return False
+
+    # no_cors 채널: 스트림이 살아있으면 LIVE
+    if no_cors:
+        return '#EXTINF' in content or '#EXT-X-STREAM-INF' in content
 
     # --- 2단계: 마스터 플레이리스트 처리 ---
     if '#EXT-X-STREAM-INF' in content:
@@ -126,7 +129,8 @@ def check_embed(url, timeout=12):
 
 def check_channel(ch):
     url = ch['url']
-    is_live = check_m3u8(url) if '.m3u8' in url else check_embed(url)
+    no_cors = ch.get('no_cors', False)
+    is_live = check_m3u8(url, no_cors=no_cors) if '.m3u8' in url else check_embed(url)
     status = 'live' if is_live else 'offline'
     icon = '✅' if is_live else '❌'
     print(f"{icon} {ch['name']}: {status.upper()}")
