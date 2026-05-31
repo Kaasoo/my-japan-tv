@@ -13,7 +13,7 @@ if sys.platform == 'win32':
 
 # 확인할 채널 목록 (channels.js와 동일하게 유지)
 CHANNELS = [
-    {"name": "NHK G",       "url": "https://nhk4.mov3.co/hls/nhk.m3u8",                                              "no_cors": True},
+    {"name": "NHK G",       "url": "https://akariko.netgenx.site/stream/jp/nhk_g/stream-output.m3u8?mode=hls"},
     {"name": "NHK E テレ",  "url": "https://akariko.netgenx.site/stream/jp/nhk_e/stream-output.m3u8?mode=hls"},
     {"name": "NTV",         "url": "https://akariko.netgenx.site/stream/jp/ntv/stream-output.m3u8?mode=hls"},
     {"name": "TV ASAHI",    "url": "https://akariko.netgenx.site/stream/jp/tv_asahi/stream-output.m3u8?mode=hls"},

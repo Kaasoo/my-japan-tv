@@ -1,6 +1,6 @@
 window.CHANNELS = [
   // Japan
-  {"name": "NHK G",      "url": "https://mov3.co/embednhk.html",                                              "link": true},
+  {"name": "NHK G",      "url": "https://akariko.netgenx.site/stream/jp/nhk_g/stream-output.m3u8?mode=hls"},
   {"name": "NHK E テレ", "url": "https://akariko.netgenx.site/stream/jp/nhk_e/stream-output.m3u8?mode=hls"},
   {"name": "NTV",        "url": "https://akariko.netgenx.site/stream/jp/ntv/stream-output.m3u8?mode=hls"},
   {"name": "TV ASAHI",   "url": "https://akariko.netgenx.site/stream/jp/tv_asahi/stream-output.m3u8?mode=hls"},
