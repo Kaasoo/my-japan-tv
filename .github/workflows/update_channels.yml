@@ -29,4 +29,5 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add status.js
           git commit -m "Auto-update status [skip ci]" || echo "No changes to commit"
+          git pull --rebase origin main
           git push origin main
