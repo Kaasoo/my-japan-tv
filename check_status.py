@@ -13,18 +13,18 @@ if sys.platform == 'win32':
 
 # 확인할 채널 목록 (channels.js와 동일하게 유지)
 CHANNELS = [
-    {"name": "NHK G",       "url": "https://nhk4.mov3.co/hls/nhk.m3u8",         "no_cors": True},
-    {"name": "NHK E テレ",  "url": "https://nl.utako.moe/NHK_E/index.m3u8"},
-    {"name": "NTV",         "url": "https://ntv5.mov3.co/hls/ntv.m3u8",         "no_cors": True},
-    {"name": "TV ASAHI",    "url": "https://tvasahi.mov3.co/hls/tvasahi.m3u8",  "no_cors": True},
-    {"name": "TBS",         "url": "https://tbs5.mov3.co/hls/tbs.m3u8",         "no_cors": True},
-    {"name": "TV TOKYO",    "url": "https://tvtokyo.mov3.co/hls/tvtokyo.m3u8",  "no_cors": True},
-    {"name": "FUJI TV",     "url": "https://fujitv4.mov3.co/hls/fujitv.m3u8",   "no_cors": True},
+    {"name": "NHK G",       "url": "https://nhk4.mov3.co/hls/nhk.m3u8",                                              "no_cors": True},
+    {"name": "NHK E テレ",  "url": "https://akariko.netgenx.site/stream/jp/nhk_e/stream-output.m3u8?mode=hls"},
+    {"name": "NTV",         "url": "https://akariko.netgenx.site/stream/jp/ntv/stream-output.m3u8?mode=hls"},
+    {"name": "TV ASAHI",    "url": "https://akariko.netgenx.site/stream/jp/tv_asahi/stream-output.m3u8?mode=hls"},
+    {"name": "TBS",         "url": "https://akariko.netgenx.site/stream/jp/tbs/stream-output.m3u8?mode=hls"},
+    {"name": "TV TOKYO",    "url": "https://akariko.netgenx.site/stream/jp/tv_tokyo/stream-output.m3u8?mode=hls"},
+    {"name": "FUJI TV",     "url": "https://fujitv4.mov3.co/hls/fujitv.m3u8",                                    "no_cors": True},
     {"name": "Tokyo MX",    "url": "https://nl.utako.moe/Tokyo_MX1/index.m3u8"},
-    {"name": "MBS",         "url": "https://nl.utako.moe/mbs/index.m3u8"},
-    {"name": "ABC TV",      "url": "https://nl.utako.moe/abc/index.m3u8"},
+    {"name": "MBS",         "url": "https://akariko.netgenx.site/stream/jp/mbs/stream-output.m3u8?mode=hls"},
+    {"name": "ABC TV",      "url": "https://akariko.netgenx.site/stream/jp/abc/stream-output.m3u8?mode=hls"},
     {"name": "関西TV",      "url": "https://nl.utako.moe/kansaitv/index.m3u8"},
-    {"name": "ytv",         "url": "https://nl.utako.moe/ytv/index.m3u8"},
+    {"name": "ytv",         "url": "https://akariko.netgenx.site/stream/jp/ytv/stream-output.m3u8?mode=hls"},
     {"name": "NHK World",   "url": "https://media-tyo.hls.nhkworld.jp/hls/w/live/master.m3u8"},
     {"name": "Weathernews", "url": "https://rch01e-alive-hls.akamaized.net/38fb45b25cdb05a1/out/v1/4e907bfabc684a1dae10df8431a84d21/index.m3u8"},
     # US News
