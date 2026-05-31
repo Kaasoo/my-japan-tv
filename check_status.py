@@ -19,7 +19,7 @@ CHANNELS = [
     {"name": "TV ASAHI",    "url": "https://akariko.netgenx.site/stream/jp/tv_asahi/stream-output.m3u8?mode=hls"},
     {"name": "TBS",         "url": "https://akariko.netgenx.site/stream/jp/tbs/stream-output.m3u8?mode=hls"},
     {"name": "TV TOKYO",    "url": "https://akariko.netgenx.site/stream/jp/tv_tokyo/stream-output.m3u8?mode=hls"},
-    {"name": "FUJI TV",     "url": "https://fujitv4.mov3.co/hls/fujitv.m3u8",                                    "no_cors": True},
+    {"name": "FUJI TV",     "url": "https://akariko.netgenx.site/stream/jp/fuji_tv/stream-output.m3u8?mode=hls"},
     {"name": "Tokyo MX",    "url": "https://nl.utako.moe/Tokyo_MX1/index.m3u8"},
     {"name": "MBS",         "url": "https://akariko.netgenx.site/stream/jp/mbs/stream-output.m3u8?mode=hls"},
     {"name": "ABC TV",      "url": "https://akariko.netgenx.site/stream/jp/abc/stream-output.m3u8?mode=hls"},
