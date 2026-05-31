@@ -22,7 +22,7 @@ window.CHANNELS = [
   // Korea
   {"name": "SBS",        "url": "https://jtvonair.sbsoft.net/jtv_live/myStream/playlist.m3u8"},
 
-  {"name": "Arirang TV", "url": "http://amdlive-ch01.ctnd.com.edgesuite.net/arirang_1ch/smil:arirang_1ch.smil/playlist.m3u8"},
+
   {"name": "Arirang UN", "url": "https://amdlive-ch02-ctnd-com.akamaized.net/arirang_2ch/smil:arirang_2ch.smil/playlist.m3u8"},
   {"name": "EBS 1TV",    "url": "https://ebsonair.ebs.co.kr/ebs1familypc/familypc1m/playlist.m3u8"},
   {"name": "EBS 2TV",    "url": "https://ebsonair.ebs.co.kr/ebs2familypc/familypc1m/playlist.m3u8"},
