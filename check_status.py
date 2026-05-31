@@ -34,6 +34,11 @@ CHANNELS = [
     {"name": "Newsmax",     "url": "https://nmx1ota.akamaized.net/hls/live/2107010/Live_1/index.m3u8"},
     # Korea
     {"name": "SBS",         "url": "https://jtvonair.sbsoft.net/jtv_live/myStream/playlist.m3u8"},
+    {"name": "TV Chosun",   "url": "http://onair.cdn.tvchosun.com/origin1/_definst_/tvchosun_s1/playlist.m3u8"},
+    {"name": "Arirang TV",  "url": "http://amdlive-ch01.ctnd.com.edgesuite.net/arirang_1ch/smil:arirang_1ch.smil/playlist.m3u8"},
+    {"name": "Arirang UN",  "url": "https://amdlive-ch02-ctnd-com.akamaized.net/arirang_2ch/smil:arirang_2ch.smil/playlist.m3u8"},
+    {"name": "EBS 1TV",     "url": "https://ebsonair.ebs.co.kr/ebs1familypc/familypc1m/playlist.m3u8"},
+    {"name": "EBS 2TV",     "url": "https://ebsonair.ebs.co.kr/ebs2familypc/familypc1m/playlist.m3u8"},
     # International
     {"name": "DW News",     "url": "https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8"},
 ]
