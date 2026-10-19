@@ -4,8 +4,8 @@
   "display": "standalone",
   "start_url": "/my-japan-tv/",
   "scope": "/my-japan-tv/",
-  "theme_color": "#121212",
-  "background_color": "#121212",
+  "theme_color": "#101315",
+  "background_color": "#101315",
   "icons": [
     {
       "src": "icon.png",

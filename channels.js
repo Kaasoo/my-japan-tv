@@ -17,10 +17,6 @@ window.CHANNELS = [
     "embed": true
   },
   {
-    "name": "NHK E テレ",
-    "url": "https://nl.utako.moe/NHK_E/index.m3u8"
-  },
-  {
     "name": "NTV",
     "url": "https://mov3.co/embedntv.html",
     "checkUrl": "https://ntv5.mov3.co/hls/ntv.m3u8",
@@ -104,26 +100,6 @@ window.CHANNELS = [
       "note": ""
     },
     "embed": true
-  },
-  {
-    "name": "Tokyo MX",
-    "url": "https://nl.utako.moe/Tokyo_MX1/index.m3u8"
-  },
-  {
-    "name": "MBS",
-    "url": "https://nl.utako.moe/mbs/index.m3u8"
-  },
-  {
-    "name": "ABC TV",
-    "url": "https://nl.utako.moe/abc/index.m3u8"
-  },
-  {
-    "name": "関西TV",
-    "url": "https://nl.utako.moe/kansaitv/index.m3u8"
-  },
-  {
-    "name": "ytv",
-    "url": "https://nl.utako.moe/ytv/index.m3u8"
   },
   {
     "name": "NHK World",
