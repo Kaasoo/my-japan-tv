@@ -47,8 +47,9 @@ def is_media(data):
 def check_stream(channel):
     headers = {**HEADERS, **channel.get('requestHeaders', {})}
     url = channel.get('checkUrl', channel['url'])
-    # External players use their own origin; in-app video requires our origin.
-    require_cors = not channel.get('link', False)
+    # External pages and embedded pages use their own origin for video requests.
+    # Only our native HLS player requires CORS access from the app origin.
+    require_cors = not (channel.get('link', False) or channel.get('embed', False))
     for _ in range(4):
         data, response_headers, base = fetch(url, headers)
         text = data.decode('utf-8', errors='replace')

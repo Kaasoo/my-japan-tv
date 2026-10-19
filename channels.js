@@ -2,7 +2,6 @@ window.CHANNELS = [
   {
     "name": "NHK G",
     "url": "https://mov3.co/embednhk.html",
-    "link": true,
     "checkUrl": "https://nhk4.mov3.co/hls/nhk.m3u8",
     "requestHeaders": {
       "Referer": "https://mov3.co/",
@@ -14,7 +13,8 @@ window.CHANNELS = [
       "bitrateMbps": 1.38,
       "checked": "2026-10-19",
       "note": ""
-    }
+    },
+    "embed": true
   },
   {
     "name": "NHK E テレ",
@@ -23,7 +23,6 @@ window.CHANNELS = [
   {
     "name": "NTV",
     "url": "https://mov3.co/embedntv.html",
-    "link": true,
     "checkUrl": "https://ntv5.mov3.co/hls/ntv.m3u8",
     "requestHeaders": {
       "Referer": "https://mov3.co/",
@@ -35,12 +34,12 @@ window.CHANNELS = [
       "bitrateMbps": 1.19,
       "checked": "2026-10-19",
       "note": ""
-    }
+    },
+    "embed": true
   },
   {
     "name": "TV ASAHI",
     "url": "https://mov3.co/embedtvasahi.html",
-    "link": true,
     "checkUrl": "https://tvasahi.mov3.co/hls/tvasahi.m3u8",
     "requestHeaders": {
       "Referer": "https://mov3.co/",
@@ -52,12 +51,12 @@ window.CHANNELS = [
       "bitrateMbps": 1.75,
       "checked": "2026-10-19",
       "note": ""
-    }
+    },
+    "embed": true
   },
   {
     "name": "TBS",
     "url": "https://mov3.co/embedtbs.html",
-    "link": true,
     "checkUrl": "https://tbs5.mov3.co/hls/tbs.m3u8",
     "requestHeaders": {
       "Referer": "https://mov3.co/",
@@ -69,12 +68,12 @@ window.CHANNELS = [
       "bitrateMbps": 1.11,
       "checked": "2026-10-19",
       "note": "Buffering possible"
-    }
+    },
+    "embed": true
   },
   {
     "name": "TV TOKYO",
     "url": "https://mov3.co/embedtvtokyo.html",
-    "link": true,
     "checkUrl": "https://tvtokyo.mov3.co/hls/tvtokyo.m3u8",
     "requestHeaders": {
       "Referer": "https://mov3.co/",
@@ -86,12 +85,12 @@ window.CHANNELS = [
       "bitrateMbps": 1.68,
       "checked": "2026-10-19",
       "note": ""
-    }
+    },
+    "embed": true
   },
   {
     "name": "FUJI TV",
     "url": "https://mov3.co/embedfujitv.html",
-    "link": true,
     "checkUrl": "https://fujitv4.mov3.co/hls/fujitv.m3u8",
     "requestHeaders": {
       "Referer": "https://mov3.co/",
@@ -103,7 +102,8 @@ window.CHANNELS = [
       "bitrateMbps": 1.39,
       "checked": "2026-10-19",
       "note": ""
-    }
+    },
+    "embed": true
   },
   {
     "name": "Tokyo MX",

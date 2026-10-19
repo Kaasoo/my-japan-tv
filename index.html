@@ -225,6 +225,7 @@
             gap: 12px;
         }
         .player-back {
+            border:0; background:transparent; font-family:inherit;
             display: flex; align-items: center; gap: 7px;
             color: #60a5fa; font-size: 14px; font-weight: 600;
             cursor: pointer; flex-shrink: 0;
@@ -277,15 +278,16 @@
 <!-- ── Player ── -->
 <div id="player-wrap">
     <div class="player-bar">
-        <div class="player-back" onclick="closePlayer()">
+        <button type="button" class="player-back" onclick="closePlayer()" aria-label="Back to channels">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="15 18 9 12 15 6"/>
             </svg>
             Back
-        </div>
+        </button>
         <div class="player-ch-name" id="player-title"></div>
     </div>
     <iframe id="video-frame"
+        title="Live TV player"
         allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
         allowfullscreen referrerpolicy="no-referrer-when-downgrade" src=""></iframe>
     <video id="hls-video" controls autoplay playsinline></video>
@@ -389,7 +391,7 @@ function renderChannels() {
     if (activeTab === 'japan') {
         const note = document.createElement('div');
         note.className = 'channel-note';
-        note.textContent = 'Japan terrestrial TV opens in a new tab. Six channels measured at 540p / 25 fps on Oct 19, 2026. TBS may buffer. LIVE confirms video data, not uninterrupted playback.';
+        note.textContent = 'Japan terrestrial TV plays here. Six channels measured at 540p / 25 fps on Oct 19, 2026. TBS may buffer. LIVE confirms video data, not uninterrupted playback.';
         root.appendChild(note);
     }
 
@@ -443,7 +445,7 @@ function renderChannels() {
                 <div class="info">
                     <div class="ch-name">${ch.name}</div>
                     <div class="ch-sub">${m.sub}</div>
-                    ${ch.quality ? `<div class="ch-quality"><span>540p · ${ch.quality.fps} fps</span><span>~${ch.quality.bitrateMbps} Mbps</span><span>New tab</span>${ch.quality.note ? `<span class="caution">${ch.quality.note}</span>` : ''}</div>` : ''}
+                    ${ch.quality ? `<div class="ch-quality"><span>540p · ${ch.quality.fps} fps</span><span>~${ch.quality.bitrateMbps} Mbps</span><span>In-app player</span>${ch.quality.note ? `<span class="caution">${ch.quality.note}</span>` : ''}</div>` : ''}
                 </div>
                 ${linkIcon}
                 <div class="status-pip ${pipClass}">${pipLabel}</div>`;
@@ -488,6 +490,7 @@ function openPlayer(url, name) {
     const frame = document.getElementById('video-frame');
     const vid   = document.getElementById('hls-video');
     document.getElementById('player-title').textContent = name;
+    frame.title = `${name} live TV player`;
 
 
     const errBox = document.getElementById('player-error');

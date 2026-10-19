@@ -11,7 +11,7 @@ class StreamChecks(unittest.TestCase):
         self.media = b'\x47' + bytes(187) + b'\x47' + bytes(187) + b'\x47' + bytes(187)
         self.playlist = b'#EXTM3U\n#EXTINF:5,\nold.ts\n#EXTINF:5,\nnew.ts\n'
 
-    def test_external_channel_sends_required_headers_and_checks_media(self):
+    def test_embedded_channel_sends_required_headers_and_checks_media(self):
         channel = next(ch for ch in checker.CHANNELS if ch['name'] == 'TBS')
         with patch.object(checker, 'fetch', side_effect=[
             (self.playlist, {}, channel['checkUrl']), (self.media, {}, 'https://media/new.ts')
