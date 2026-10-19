@@ -136,6 +136,7 @@
 
         /* ── Channel card ── */
         .card {
+            width: 100%; text-align: left; font: inherit; color: inherit; text-decoration: none;
             display: flex; align-items: center; gap: 14px;
             background: var(--surface);
             border: 1px solid var(--border);
@@ -150,6 +151,7 @@
             background: var(--surface-hover);
             border-color: var(--border-hover);
         }
+        .card:focus-visible { outline: 2px solid #93c5fd; outline-offset: 3px; }
         .card:active { transform: scale(0.975); }
 
         /* ── Network badge ── */
@@ -168,6 +170,10 @@
         .ch-name { font-size: 14px; font-weight: 600; color: var(--text); }
         .ch-sub  { font-size: 11px; color: var(--text-sub); margin-top: 2px;
                    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .ch-quality { display:flex; flex-wrap:wrap; gap:4px 8px; margin-top:6px; font-size:10px; color:#b1cbea; }
+        .ch-quality .caution { color:#fbbf24; }
+        .channel-note { padding:12px 14px; margin-bottom:4px; border:1px solid var(--border);
+            border-radius:12px; color:#b1cbea; background:rgba(96,165,250,0.07); font-size:11px; line-height:1.7; }
 
         /* ── Status pip ── */
         .status-pip {
@@ -186,11 +192,11 @@
         .status-pip.unknown::before { background:#4a6080; opacity:0.5; }
 
         /* 오프라인 카드 살짝 흐리게 */
-        .card.is-offline { opacity: 0.55; }
+        .card.is-offline { --card-opacity: 0.55; }
 
         /* ── Card appear animation ── */
         @keyframes appear {
-            to { opacity: 1; transform: translateY(0); }
+            to { opacity: var(--card-opacity, 1); transform: translateY(0); }
         }
 
         /* ── Footer ── */
@@ -256,7 +262,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/><path d="M12 7v5l3 3"/>
             </svg>
-            Stream status checked every hour
+            Stream availability checked hourly
         </div>
         <div class="status-bar-right" id="last-checked"></div>
     </div>
@@ -323,6 +329,17 @@ const META = {
 };
 
 let hlsInstance = null;
+const STATUS_MAX_AGE = 3 * 60 * 60 * 1000;
+
+function statusIsFresh() {
+    const checked = Date.parse(window.STATUS && window.STATUS.updated);
+    const age = Date.now() - checked;
+    return Number.isFinite(checked) && age >= -60000 && age <= STATUS_MAX_AGE;
+}
+
+function channelStatus(name) {
+    return statusIsFresh() && window.STATUS.channels ? window.STATUS.channels[name] : 'unknown';
+}
 
 // ── 탭 전환 ──
 function switchTab(tab, btn) {
@@ -337,7 +354,9 @@ function renderLastChecked() {
     const el = document.getElementById('last-checked');
     if (!el) return;
     const updated = window.STATUS && window.STATUS.updated;
-    if (!updated) { el.textContent = ''; return; }
+    if (!updated || !Number.isFinite(Date.parse(updated))) {
+        el.textContent = 'Status not checked'; return;
+    }
 
     const diff = Math.floor((Date.now() - new Date(updated).getTime()) / 1000);
     let label;
@@ -348,6 +367,7 @@ function renderLastChecked() {
 
     const timeStr = new Date(updated).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     el.innerHTML = `Last checked: <strong>${timeStr}</strong> <span style="opacity:0.6">(${label})</span>`;
+    if (!statusIsFresh()) el.append(' · Outdated');
 }
 
 // ── 채널 목록 렌더링 ──
@@ -366,6 +386,12 @@ function renderChannels() {
 
     const activeTab = window._activeTab || 'japan';
     const ORDER     = activeTab === 'japan' ? JAPAN_CATS : WORLD_CATS;
+    if (activeTab === 'japan') {
+        const note = document.createElement('div');
+        note.className = 'channel-note';
+        note.textContent = 'Japan terrestrial TV opens in a new tab. Six channels measured at 540p / 25 fps on Oct 19, 2026. TBS may buffer. LIVE confirms video data, not uninterrupted playback.';
+        root.appendChild(note);
+    }
 
     const groups = {};
     channels.forEach(ch => {
@@ -383,15 +409,25 @@ function renderChannels() {
         label.textContent = cat;
         root.appendChild(label);
 
+        groups[cat].sort((a, b) => Number(Boolean(b.quality)) - Number(Boolean(a.quality)));
         groups[cat].forEach(ch => {
             const m = META[ch.name] || { abbr: ch.name.slice(0,3), c: '#60a5fa', sub: '' };
             const r = hexToRgb(m.c);
 
-            const chStatus = (window.STATUS && window.STATUS.channels) ? window.STATUS.channels[ch.name] : null;
+            const chStatus = channelStatus(ch.name);
             const pipClass = chStatus === 'live' ? 'live' : chStatus === 'offline' ? 'offline' : 'unknown';
-            const pipLabel = chStatus === 'offline' ? 'OFF AIR' : 'LIVE';
+            const pipLabel = chStatus === 'live' ? 'LIVE' : chStatus === 'offline' ? 'UNAVAILABLE' : 'UNKNOWN';
 
-            const card = document.createElement('div');
+            const card = document.createElement(ch.link ? 'a' : 'button');
+            if (ch.link) {
+                card.href = ch.url;
+                card.target = '_blank';
+                card.rel = 'noreferrer noopener';
+            } else {
+                card.type = 'button';
+            }
+            card.setAttribute('aria-label', `${ch.name}: ${pipLabel}${ch.link ? ', opens in a new tab' : ''}`);
+            if (ch.quality) card.title = `Quality sampled ${ch.quality.checked}: ${ch.quality.resolution}, ${ch.quality.fps} fps, ~${ch.quality.bitrateMbps} Mbps (audio + video)`;
             card.className = 'card' + (chStatus === 'offline' ? ' is-offline' : '');
             card.style.cssText = [
                 `--badge-color:${m.c}`,
@@ -407,14 +443,14 @@ function renderChannels() {
                 <div class="info">
                     <div class="ch-name">${ch.name}</div>
                     <div class="ch-sub">${m.sub}</div>
+                    ${ch.quality ? `<div class="ch-quality"><span>540p · ${ch.quality.fps} fps</span><span>~${ch.quality.bitrateMbps} Mbps</span><span>New tab</span>${ch.quality.note ? `<span class="caution">${ch.quality.note}</span>` : ''}</div>` : ''}
                 </div>
                 ${linkIcon}
                 <div class="status-pip ${pipClass}">${pipLabel}</div>`;
             card.onclick = () => {
                 if (ch.link) {
-                    const a = document.createElement('a');
-                    a.href = ch.url; a.target = '_blank'; a.rel = 'noreferrer noopener';
-                    a.click();
+                    if (typeof gtag === 'function')
+                        gtag('event', 'select_content', { content_type: 'channel', content_id: ch.name });
                 } else {
                     openPlayer(ch.url, ch.name);
                 }
@@ -428,6 +464,12 @@ function renderChannels() {
 document.addEventListener('DOMContentLoaded', () => {
     renderLastChecked();
     renderChannels();
+    let wasFresh = statusIsFresh();
+    setInterval(() => {
+        renderLastChecked();
+        const fresh = statusIsFresh();
+        if (fresh !== wasFresh) { renderChannels(); wasFresh = fresh; }
+    }, 60000);
 });
 
 function hexToRgb(hex) {
@@ -499,8 +541,8 @@ function closePlayer() {
 }
 
 if ('serviceWorker' in navigator)
-    navigator.serviceWorker.register('/my-japan-tv/sw.js')
-        .then(() => console.log('SW registered'));
+    navigator.serviceWorker.register('sw.js')
+        .catch(error => console.warn('Service worker unavailable:', error));
 </script>
 </body>
 </html>
