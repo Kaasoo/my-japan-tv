@@ -79,6 +79,7 @@
             Back
         </button>
         <div class="player-ch-name" id="player-title"></div>
+        <a id="player-direct" class="player-direct" href="" hidden>Open in this tab</a>
         <span class="player-live">LIVE TV</span>
     </div>
     <iframe id="video-frame"
@@ -121,6 +122,12 @@ const META = {
 
 let hlsInstance = null;
 const STATUS_MAX_AGE = 3 * 60 * 60 * 1000;
+
+function usesMobilePlayer() {
+    return Boolean(navigator.userAgentData && navigator.userAgentData.mobile) ||
+        /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '') ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
 
 function statusIsFresh() {
     const checked = Date.parse(window.STATUS && window.STATUS.updated);
@@ -235,7 +242,8 @@ function renderChannels() {
             } else {
                 card.type = 'button';
             }
-            card.setAttribute('aria-label', `${ch.name}: ${pipLabel}${ch.link ? ', opens in a new tab' : ''}`);
+            const mobileEmbed = ch.embed && usesMobilePlayer();
+            card.setAttribute('aria-label', `${ch.name}: ${pipLabel}${ch.link ? ', opens in a new tab' : mobileEmbed ? ', opens in this tab' : ''}`);
             if (ch.quality) card.title = `Quality sampled ${ch.quality.checked}: ${ch.quality.resolution}, ${ch.quality.fps} fps, ~${ch.quality.bitrateMbps} Mbps (audio + video)`;
             card.className = 'card' + (chStatus === 'offline' ? ' is-offline' : '');
             card.style.cssText = [
@@ -248,7 +256,7 @@ function renderChannels() {
                 <span class="info">
                     <span class="ch-name">${ch.name}</span>
                     <span class="ch-sub">${m.sub}</span>
-                    <span class="ch-quality">${ch.quality ? `<span class="quality-tag">540p</span><span>${ch.quality.fps} fps</span><span>~${ch.quality.bitrateMbps} Mbps</span>${ch.quality.note ? `<span class="caution">${ch.quality.note}</span>` : ''}` : `<span>${ch.link ? 'Opens in a new tab' : 'Watch live'}</span>`}</span>
+                    <span class="ch-quality">${ch.quality ? `<span class="quality-tag">540p</span><span>${ch.quality.fps} fps</span><span>~${ch.quality.bitrateMbps} Mbps</span>${mobileEmbed ? '<span class="mobile-route">Mobile · same tab</span>' : ''}${ch.quality.note ? `<span class="caution">${ch.quality.note}</span>` : ''}` : `<span>${ch.link ? 'Opens in a new tab' : 'Watch live'}</span>`}</span>
                 </span>
                 <span class="status-pip ${pipClass}">${pipLabel}</span>
                 <span class="play-cue" aria-hidden="true"><svg viewBox="0 0 12 12" fill="currentColor">${ch.link ? '<path d="M3 2h7v7H8V5.4L3 10 1.6 8.6 6.6 4H3z"/>' : '<path d="M3 1.5 10 6l-7 4.5z"/>'}</svg></span>`;
@@ -256,6 +264,11 @@ function renderChannels() {
                 if (ch.link) {
                     if (typeof gtag === 'function')
                         gtag('event', 'select_content', { content_type: 'channel', content_id: ch.name });
+                } else if (mobileEmbed) {
+                    if (typeof gtag === 'function')
+                        gtag('event', 'select_content', { content_type: 'channel', content_id: ch.name });
+                    // Navigate within the existing tab: no popup and no embedded-player restrictions.
+                    window.location.assign(ch.url);
                 } else {
                     openPlayer(ch.url, ch.name);
                 }
@@ -295,6 +308,10 @@ function openPlayer(url, name) {
     const vid   = document.getElementById('hls-video');
     document.getElementById('player-title').textContent = name;
     frame.title = `${name} live TV player`;
+    const direct = document.getElementById('player-direct');
+    direct.hidden = url.includes('.m3u8');
+    if (direct.hidden) direct.removeAttribute('href');
+    else direct.href = url;
 
 
     const errBox = document.getElementById('player-error');
@@ -343,6 +360,9 @@ function closePlayer() {
     vid.src = ''; vid.style.display = 'none';
     frame.src = ''; frame.style.display = 'block';
     document.getElementById('player-error').style.display = 'none';
+    const direct = document.getElementById('player-direct');
+    direct.hidden = true;
+    direct.removeAttribute('href');
     wrap.classList.remove('open');
     document.body.style.overflow = 'auto';
 }
