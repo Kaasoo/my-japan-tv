@@ -192,6 +192,16 @@ function renderChannels() {
 
     const activeTab = window._activeTab || 'japan';
     const ORDER     = activeTab === 'japan' ? JAPAN_CATS : WORLD_CATS;
+    if (activeTab === 'japan') {
+        const audioHelp = document.createElement('details');
+        audioHelp.className = 'audio-help';
+        audioHelp.innerHTML = `<summary>Sound breaking up on Android?</summary>
+            <p>The external web player may have audio compatibility issues. You can try a separate player:</p>
+            <ol><li>Install <a href="https://www.videolan.org/vlc/download-android.html">VLC for Android</a> if needed.</li>
+            <li><a href="japan-tv-vlc.m3u" download="japan-tv-vlc.m3u">Download the Japan TV playlist</a>, then open the downloaded file with VLC.</li></ol>
+            <p>Includes all six terrestrial channels. Playback in VLC has not been verified on your phone.</p>`;
+        root.appendChild(audioHelp);
+    }
     const japanCount = channels.filter(ch => JAPAN_CATS.includes((META[ch.name] || {}).cat)).length;
     const worldCount = channels.filter(ch => WORLD_CATS.includes((META[ch.name] || {}).cat)).length;
     document.getElementById('japan-count').textContent = japanCount.toString().padStart(2,'0');

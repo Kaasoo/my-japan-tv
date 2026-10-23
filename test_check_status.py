@@ -65,6 +65,13 @@ class StreamChecks(unittest.TestCase):
             self.assertEqual(checker.check_channel({'name': 'Test', 'url': 'https://cdn/player.html'}), ('Test', 'unknown'))
             fetch.assert_not_called()
 
+    def test_vlc_playlist_matches_current_terrestrial_sources(self):
+        text = (checker.ROOT / 'japan-tv-vlc.m3u').read_text(encoding='utf-8')
+        sources = [ch['checkUrl'] for ch in checker.CHANNELS if ch.get('embed')]
+        self.assertTrue(text.startswith('#EXTM3U\n'))
+        self.assertEqual([line for line in text.splitlines() if line.startswith('https://')], sources)
+        self.assertEqual(text.count('#EXTVLCOPT:http-referrer=https://mov3.co/'), len(sources))
+
 
 if __name__ == '__main__':
     unittest.main()
